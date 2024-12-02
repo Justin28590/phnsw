@@ -2,3 +2,4 @@
 *.csv
 *.out
 .vscode/*
+tests/__pycache__/*
