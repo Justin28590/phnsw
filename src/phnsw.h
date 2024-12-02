@@ -38,8 +38,18 @@ public:
          */
 	SST_ELI_DOCUMENT_PARAMS(
 		{ "printFrequency", "How frequently to print a message from the component", "5" },
-		{ "repeats", "Number of repetitions to make", "10" }
-	)
+		{ "repeats", "Number of repetitions to make", "10" },
+                {"scratchSize",             "(uint) Size of the scratchpad in bytes"},
+                {"maxAddr",                 "(uint) Maximum address to generate (i.e., scratchSize + size of memory)"},
+                {"rngseed",                 "(int) Set a seed for the random generator used to create requests", "7"},
+                {"scratchLineSize",         "(uint) Line size for scratch, max request size for scratch", "64"},
+                {"memLineSize",             "(uint) Line size for memory, max request size for memory", "64"},
+                {"clock",                   "(string) Clock frequency in Hz or period in s", "1GHz"},
+                {"maxOutstandingRequests",  "(uint) Maximum number of requests outstanding at a time", "8"},
+                {"maxRequestsPerCycle",     "(uint) Maximum number of requests to issue per cycle", "2"},
+                {"reqsToIssue",             "(uint) Number of requests to issue before ending simulation", "1000"}
+        )
+
 
         /* Document ports (optional if no ports declared)
          *  Format: { "portname", "description", { "eventtype0", "eventtype1" } }
