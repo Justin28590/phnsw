@@ -133,16 +133,24 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
             SST::Interfaces::StandardMem::Request *req;
 
             // Send Read request
-            uint32_t size = 1024;
-            SST::Interfaces::StandardMem::Addr addr = num_events_issued * 1024;
+            uint32_t size = 2;
+            SST::Interfaces::StandardMem::Addr addr = 0; // currentCycle * 8;
 
-            req = new SST::Interfaces::StandardMem::Read(addr, size);
-            output.output("ScratchCPU (%s) sending Read. Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
-
-            requests[req->getID()] = timestamp;
-            memory->send(req);
-
-            num_events_issued++;
+            if (currentCycle == 10 /*% 50 == 0*/) {
+                std::vector<uint8_t> data(size, 0x11);
+                req = new SST::Interfaces::StandardMem::Write(addr, size, data);
+                output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
+                output.output("%s\n", req->getString().c_str());
+                requests[req->getID()] = timestamp;
+                memory->send(req);
+                num_events_issued++;
+            } else if (currentCycle == 50/*% 10 == 0*/) {
+                req = new SST::Interfaces::StandardMem::Read(addr, size);
+                output.output("ScratchCPU (%s) sending Read.%" PRIu64 " Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), req->getID(), addr, size, getCurrentSimCycle()/1000);
+                requests[req->getID()] = timestamp;
+                memory->send(req);
+                num_events_issued++;
+            }
         }
     }
     return false;
@@ -153,7 +161,8 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
     std::unordered_map<uint64_t, SST::SimTime_t>::iterator i = requests.find(response->getID());
     sst_assert(i != requests.end(), CALL_INFO, -1, "Received response but request not found! ID = %" PRIu64 "\n", response->getID());
     requests.erase(i);
-    output.output("erase request %" PRIu64 " at %" PRIu64 "ns\n", response->getID(), getCurrentSimCycle()/1000);
+    // output.output("erase request %" PRIu64 " at %" PRIu64 "ns\n", response->getID(), getCurrentSimCycle()/1000);
+    output.output("Time.%" PRIu64 " at %s\n", getCurrentSimCycle()/1000, response->getString().c_str());
     num_events_returned++;
     delete response;
 }
