@@ -1,5 +1,6 @@
 *.so
 *.csv
 *.out
+*log*
 .vscode/*
 tests/__pycache__/*
