@@ -17,7 +17,7 @@ comp_cpu.addParams({
     "clock" : "1GHz",
     "maxOutstandingRequests" : 16,
     "maxRequestsPerCycle" : 2,
-    "reqsToIssue" : 3,
+    "reqsToIssue" : 2,
     "verbose" : 1
     })
 
@@ -30,7 +30,7 @@ comp_scratch.addParams({
     "size" : "1KiB",
     "scratch_line_size" : 64,
     "memory_line_size" : 64,
-    "backing" : "none",
+    "backing" : "mmap",
 })
 scratch_conv = comp_scratch.setSubComponent("backendConvertor", "memHierarchy.simpleMemScratchBackendConvertor")
 scratch_back = scratch_conv.setSubComponent("backend", "memHierarchy.simpleMem")
