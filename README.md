@@ -3,7 +3,7 @@
 - This project is under development. It is compeletly unfunctional currently.
 
 ## Prerequisites
-Make sure your [SST Core](https://github.com/sstsimulator/sst-core) is installed successfully.
+Make sure your [SST Core](https://github.com/sstsimulator/sst-core) and [SST Elements](https://github.com/sstsimulator/sst-elements) is installed successfully.
 
 ## Building
 This phnsw component is derived from [sst-external-element](https://github.com/sstsimulator/sst-external-element) (An example for u to create your own SST Componets) and it is portable to SST.
