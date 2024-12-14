@@ -137,7 +137,8 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
             SST::Interfaces::StandardMem::Addr addr = 0; // currentCycle * 8;
 
             if (currentCycle == 10 /*% 50 == 0*/) {
-                std::vector<uint8_t> data(size, 0x11);
+                // std::vector<uint8_t> data(size, 0xff);
+                std::vector<uint8_t> data = {0xab, 0xcd};
                 req = new SST::Interfaces::StandardMem::Write(addr, size, data);
                 output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
                 output.output("%s\n", req->getString().c_str());
