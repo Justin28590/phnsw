@@ -67,7 +67,7 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     size += "B";
     params.insert("scratchpad_size", size);
 
-    output.output("hello world!!!\n");
+    // output.output("hello world!!!\n");
 
     memory = loadUserSubComponent<SST::Interfaces::StandardMem>(
                 "memory",
@@ -89,19 +89,19 @@ Phnsw::~Phnsw() { }
 
 void Phnsw::init(unsigned int phase) {
     memory->init(phase);
-    output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of init.\n", phase);
+    // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of init.\n", phase);
 }
 
 void Phnsw::setup() {
-    output.verbose(CALL_INFO, 1, 0, "Component is being setup.\n");
+    // output.verbose(CALL_INFO, 1, 0, "Component is being setup.\n");
 }
 
 void Phnsw::complete(unsigned int phase) {
-    output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
+    // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
 }
 
 void Phnsw::finish() {
-    output.verbose(CALL_INFO, 1, 0, "Component is being finished.\n");
+    // output.verbose(CALL_INFO, 1, 0, "Component is being finished.\n");
 }
 
 
