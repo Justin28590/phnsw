@@ -35,7 +35,8 @@ comp_scratch.addParams({
 scratch_conv = comp_scratch.setSubComponent("backendConvertor", "memHierarchy.simpleMemScratchBackendConvertor")
 scratch_back = scratch_conv.setSubComponent("backend", "memHierarchy.simpleMem")
 scratch_back.addParams({
-    "access_time" : "10ns",
+    "access_time" : "10ps",
+    "mem_size" : "1MiB"
 })
 scratch_conv.addParams({
     "debug_location" : 0,
