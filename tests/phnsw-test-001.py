@@ -30,7 +30,7 @@ comp_scratch.addParams({
     "size" : "1KiB",
     "scratch_line_size" : 64,
     "memory_line_size" : 64,
-    "backing" : "mmap",
+    "backing" : "malloc"
 })
 scratch_conv = comp_scratch.setSubComponent("backendConvertor", "memHierarchy.simpleMemScratchBackendConvertor")
 scratch_back = scratch_conv.setSubComponent("backend", "memHierarchy.simpleMem")
