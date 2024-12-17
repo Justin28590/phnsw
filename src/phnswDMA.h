@@ -75,7 +75,35 @@ public:
             )
 
     // Other ELI macros as needed for parameters, ports, statistics, and subcomponent slots
-    SST_ELI_DOCUMENT_PARAMS( { "amount", "Amount to increment by", "1" } )
+    SST_ELI_DOCUMENT_PARAMS(
+    { "amount",                  "Amount to increment by", "1" },
+    { "printFrequency",          "How frequently to print a message from the component", "5" },
+    { "repeats",                 "Number of repetitions to make", "10" },
+    { "scratchSize",             "(uint) Size of the scratchpad in bytes"},
+    { "maxAddr",                 "(uint) Maximum address to generate (i.e., scratchSize + size of memory)"},
+    { "rngseed",                 "(int) Set a seed for the random generator used to create requests", "7"},
+    { "scratchLineSize",         "(uint) Line size for scratch, max request size for scratch", "64"},
+    { "memLineSize",             "(uint) Line size for memory, max request size for memory", "64"},
+    { "clock",                   "(string) Clock frequency in Hz or period in s", "1GHz"},
+    { "maxOutstandingRequests",  "(uint) Maximum number of requests outstanding at a time", "8"},
+    { "maxRequestsPerCycle",     "(uint) Maximum number of requests to issue per cycle", "2"},
+    { "reqsToIssue",             "(uint) Number of requests to issue before ending simulation", "1000"}
+    )
+
+    /* Document ports (optional if no ports declared)
+     *  Format: { "portname", "description", { "eventtype0", "eventtype1" } }
+     */
+    SST_ELI_DOCUMENT_PORTS(
+        {"mem_link", "Connection to spm", { "memHierarchy.MemEventBase" } }
+    )
+
+    /* Document subcomponent slots (optional if no subcomponent slots declared)
+     *  Format: { "slotname", "description", "subcomponentAPI" }
+     */
+    SST_ELI_DOCUMENT_SUBCOMPONENT_SLOTS(
+        {"memory", "Interface to memory (e.g., caches)", "SST::Interfaces::StandardMem"}
+    )
+
 
     phnswDMA(ComponentId_t id, Params& params);
     ~phnswDMA();
@@ -83,8 +111,34 @@ public:
     void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
+    void handleEvent( SST::Interfaces::StandardMem::Request *ev );
+
 private:
     int amount;
+    SST::Output output;
+
+    // Parameters
+    uint64_t scratchSize;       // Size of scratchpad
+    uint64_t maxAddr;           // Max address of memory
+    uint64_t scratchLineSize;   // Line size for scratchpad -> controls maximum request size
+    uint64_t memLineSize;       // Line size for memory -> controls maximum request size
+    uint64_t log2ScratchLineSize;
+    uint64_t log2MemLineSize;
+
+    uint32_t reqPerCycle;   // Up to this many requests can be issued in a cycle
+    uint32_t reqQueueSize;  // Maximum number of outstanding requests
+    uint64_t reqsToIssue;   // Number of requests to issue before ending simulation
+
+    // Local variables
+    SST::Interfaces::StandardMem * memory;         // scratch interface
+    std::unordered_map<uint64_t, SST::SimTime_t> requests; // Request queue (outstanding requests)
+    SST::TimeConverter *clockTC;                 // Clock object
+    SST::Clock::HandlerBase *clockHandler;       // Clock handler
+
+    uint64_t timestamp;     // current timestamp
+    uint64_t num_events_issued;      // number of events that have been issued at a given time
+    uint64_t num_events_returned;    // number of events that have returned
+
 };
 
 } } /* Namspaces */

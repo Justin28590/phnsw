@@ -35,9 +35,42 @@ using namespace phnsw;
 // phnswDMADRAM
 
 phnswDMA::phnswDMA(ComponentId_t id, Params& params) :
-    phnswDMAAPI(id, params) 
-{
+    phnswDMAAPI(id, params)  {
     amount = params.find<int>("amount",  1);
+
+    // Memory parameters
+    scratchSize = params.find<uint64_t>("scratchSize", 0);
+    maxAddr = params.find<uint64_t>("maxAddr", 0);
+    scratchLineSize = params.find<uint64_t>("scratchLineSize", 64);
+    memLineSize = params.find<uint64_t>("memLineSize", 64);
+
+    if (!scratchSize) output.fatal(CALL_INFO, -1, "Error (%s): invalid param 'scratchSize' - must be at least 1", getName().c_str());
+    if (maxAddr <= scratchSize) output.fatal(CALL_INFO, -1, "Error (%s): invalid param 'maxAddr' - must be larger than 'scratchSize'", getName().c_str());
+    if (scratchLineSize < 1) output.fatal(CALL_INFO, -1, "Error (%s): invalid param 'scratchLineSize' - must be greater than 0\n", getName().c_str());
+    if (memLineSize < scratchLineSize) output.fatal(CALL_INFO, -1, "Error (%s): invalid param 'memLineSize' - must be greater than or equal to 'scratchLineSize'\n", getName().c_str());
+    if (!SST::MemHierarchy::isPowerOfTwo(scratchLineSize)) output.fatal(CALL_INFO, -1, "Error (%s): invalid param 'scratchLineSize' - must be a power of 2\n", getName().c_str());
+    if (!SST::MemHierarchy::isPowerOfTwo(memLineSize)) output.fatal(CALL_INFO, -1, "Error (%s): invalid param 'memLineSize' - must be a power of 2\n", getName().c_str());
+
+    log2ScratchLineSize = SST::MemHierarchy::log2Of(scratchLineSize);
+    log2MemLineSize = SST::MemHierarchy::log2Of(memLineSize);
+
+    reqQueueSize = params.find<uint32_t>("maxOutstandingRequests", 8);
+    reqPerCycle = params.find<uint32_t>("maxRequestsPerCycle", 2);
+
+    reqsToIssue = params.find<uint64_t>("reqsToIssue", 1000);
+
+    std::string size = params.find<std::string>("scratchSize", "0");
+    size += "B";
+    params.insert("scratchpad_size", size);
+
+    memory = loadUserSubComponent<SST::Interfaces::StandardMem>(
+                "memory",
+                SST::ComponentInfo::SHARE_NONE,
+                clockTC,
+                new SST::Interfaces::StandardMem::Handler<phnswDMA>(this, &phnswDMA::handleEvent)
+            );
+
+    sst_assert(memory, CALL_INFO, -1, "Unable to load scratchInterface subcomponent\n");
 }
 
 phnswDMA::~phnswDMA() { }
@@ -48,6 +81,14 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size)
     << std::hex << addr
     << std::dec << " and size " << size
     << std::endl;
+
+    SST::Interfaces::StandardMem::Request *req;
+    req = new SST::Interfaces::StandardMem::Read(addr, size);
+    req->setNoncacheable();
+    output.output("%s\n", req->getString().c_str());
+    requests[req->getID()] = timestamp;
+    memory->send(req);
+    num_events_issued++;
 }
 
 void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
