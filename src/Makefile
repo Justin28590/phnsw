@@ -1,13 +1,22 @@
 
 NAME=phnsw
+
+PHNSW_SOURCES := $(wildcard *.cc)
+PHNSW_HEADERS := $(wildcard *.h)
+
+PHNSW_OBJS := $(patsubst %.cc,%.o,$(wildcard *.cc))
+
 CXX=$(shell sst-config --CXX)
 CXXFLAGS=$(shell sst-config --ELEMENT_CXXFLAGS)
 LDFLAGS=$(shell sst-config --ELEMENT_LDFLAGS)
 
 all: lib$(NAME).so install
 
-lib$(NAME).so: $(NAME).cc
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $<
+%.o: %.cc $(PHNSW_SOURCES) $(PHNSW_HEADERS)
+	$(CXX) $(CXXFLAGS) -c $<
+
+lib$(NAME).so: $(PHNSW_OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ *.o
 
 install:
 	sst-register $(NAME) $(NAME)_LIBDIR=$(CURDIR)
