@@ -1,6 +1,6 @@
 # phnsw: An optimized HNSW (Hierarchical Navigable Small World graphs) ASIP model for SST Simulator
 ## Getting Started
-- This project is under development. It is compeletly unfunctional currently.
+- This project is under development. It is compeletly unfunctional currently (now DMA is a little functional).
 
 ## Prerequisites
 Make sure your [SST Core](https://github.com/sstsimulator/sst-core) and [SST Elements](https://github.com/sstsimulator/sst-elements) is installed successfully.
