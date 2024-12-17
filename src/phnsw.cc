@@ -17,6 +17,9 @@
 #include <sst/core/interfaces/stringEvent.h>
 #include <sst/core/realtimeAction.h>
 
+using namespace SST;
+using namespace phnsw;
+
 Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     SST::Component(id), repeats(0) {
 

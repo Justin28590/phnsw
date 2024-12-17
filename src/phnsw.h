@@ -9,8 +9,8 @@
 // information, see the LICENSE file in the top level directory of the
 // distribution.
 
-#ifndef _SIMPLE_EXTERNAL_ELEMENT_H
-#define _SIMPLE_EXTERNAL_ELEMENT_H
+#ifndef _PHNSW_H
+#define _PHNSW_H
 
 #include <sst/core/component.h>
 #include <sst/core/interfaces/stdMem.h>
@@ -18,6 +18,12 @@
 #include <sst/core/rng/marsaglia.h>
 
 #include <unordered_map>
+
+// Include file for the SubComponent API we'll use
+#include "phnswDMA.h"
+
+namespace SST {
+namespace phnsw {
 
 class Phnsw : public SST::Component {
 
@@ -122,5 +128,5 @@ private:
     uint64_t num_events_returned;    // number of events that have returned
 };
 
-
+} } // namespace phnsw
 #endif
