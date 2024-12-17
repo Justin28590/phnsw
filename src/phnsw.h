@@ -78,7 +78,8 @@ public:
      *  Format: { "slotname", "description", "subcomponentAPI" }
      */
     SST_ELI_DOCUMENT_SUBCOMPONENT_SLOTS(
-        {"memory", "Interface to memory (e.g., caches)", "SST::Interfaces::StandardMem"}
+        {"memory", "Interface to memory (e.g., caches)", "SST::Interfaces::StandardMem"},
+        {"dma", "Interface to DMA", "phnsw::phnswDMAAPI"}
     )
 
 /* Class members */
@@ -126,6 +127,8 @@ private:
     uint64_t timestamp;     // current timestamp
     uint64_t num_events_issued;      // number of events that have been issued at a given time
     uint64_t num_events_returned;    // number of events that have returned
+
+    SST::phnsw::phnswDMAAPI *dma;
 };
 
 } } // namespace phnsw
