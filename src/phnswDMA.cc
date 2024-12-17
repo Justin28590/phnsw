@@ -97,3 +97,12 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
     SST_SER(amount);
 }
 
+void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *ev ) {
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime() << std::endl;
+    delete ev;
+}
+
+void phnswDMA::init(unsigned int phase) {
+    memory->init(phase);
+    std::cout << "memory->init(phase) called" << std::endl;
+}

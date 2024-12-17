@@ -109,6 +109,12 @@ public:
     phnswDMA(ComponentId_t id, Params& params);
     ~phnswDMA();
 
+    // SST lifecycle functions (optional if not used)
+    virtual void init(unsigned int phase) override;
+    // virtual void setup() override;
+    // virtual void complete(unsigned int phase) override;
+    // virtual void finish() override;
+
     void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
