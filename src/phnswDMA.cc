@@ -30,25 +30,25 @@ using namespace phnsw;
 /***********************************************************************************/
 // phnswDMADRAM
 
-phnswDMADRAM::phnswDMADRAM(ComponentId_t id, Params& params) :
+phnswDMA::phnswDMA(ComponentId_t id, Params& params) :
     phnswDMAAPI(id, params) 
 {
     amount = params.find<int>("amount",  1);
 }
 
-phnswDMADRAM::~phnswDMADRAM() { }
+phnswDMA::~phnswDMA() { }
 
-int phnswDMADRAM::compute( int num )
+int phnswDMA::compute( int num )
 {
     return num + amount;
 }
 
-std::string phnswDMADRAM::compute ( std::string comp )
+std::string phnswDMA::compute ( std::string comp )
 {
     return "(" + comp + ")" + " + " + std::to_string(amount);
 }
 
-void phnswDMADRAM::serialize_order(SST::Core::Serialization::serializer& ser) {
+void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
     SubComponent::serialize_order(ser);
 
     SST_SER(amount);

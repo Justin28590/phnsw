@@ -60,14 +60,14 @@ public:
 /*****************************************************************************************************/
 
 /* SubComponent that does an 'increment' computation */
-class phnswDMADRAM : public phnswDMAAPI {
+class phnswDMA : public phnswDMAAPI {
 public:
     
     // Register this subcomponent with SST and tell SST that it implements the 'phnswDMAAPI' API
     SST_ELI_REGISTER_SUBCOMPONENT(
-            phnswDMADRAM,     // Class name
+            phnswDMA,     // Class name
             "phnsw",         // Library name, the 'lib' in SST's lib.name format
-            "phnswDMADRAM",   // Name used to refer to this subcomponent, the 'name' in SST's lib.name format
+            "phnswDMA",   // Name used to refer to this subcomponent, the 'name' in SST's lib.name format
             SST_ELI_ELEMENT_VERSION(1,0,0), // A version number
             "SubComponent DMA that READ from DRAM", // Description
             SST::phnsw::phnswDMAAPI // Fully qualified name of the API this subcomponent implements
@@ -77,8 +77,8 @@ public:
     // Other ELI macros as needed for parameters, ports, statistics, and subcomponent slots
     SST_ELI_DOCUMENT_PARAMS( { "amount", "Amount to increment by", "1" } )
 
-    phnswDMADRAM(ComponentId_t id, Params& params);
-    ~phnswDMADRAM();
+    phnswDMA(ComponentId_t id, Params& params);
+    ~phnswDMA();
 
     int compute( int num) override;
     std::string compute( std::string comp ) override;
