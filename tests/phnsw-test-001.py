@@ -21,6 +21,8 @@ comp_cpu.addParams({
     "verbose" : 1
     })
 
+dma = comp_cpu.setSubComponent("dma", "phnsw.phnswDMA")
+
 iface = comp_cpu.setSubComponent("memory", "memHierarchy.standardInterface")
 comp_scratch = sst.Component("scratch", "memHierarchy.Scratchpad")
 comp_scratch.addParams({
