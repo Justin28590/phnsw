@@ -26,6 +26,7 @@
     
 #include <sst/core/subcomponent.h>
 #include <sst/core/interfaces/stdMem.h>
+#include <sst/core/params.h>
 
 namespace SST {
 namespace phnsw {
