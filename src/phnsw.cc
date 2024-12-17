@@ -117,20 +117,6 @@ void Phnsw::finish() {
 
 
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
-
-    // if( currentCycle % printFreq == 0 ) {
-    //     output.verbose(CALL_INFO, 1, 0, "Hello World! Current Cycle=%ld\n", currentCycle);
-    // }
-
-    // repeats++;
-
-    // if( repeats == maxRepeats ) {
-    //     primaryComponentOKToEndSim();
-	//     return true;    // Stop calling this clock handler
-    // } else {
-	//     return false;   // Keep calling this clock handler
-    // }
-
     timestamp++;
 
     if (num_events_issued == reqsToIssue) {
