@@ -22,6 +22,54 @@ comp_cpu.addParams({
     })
 
 dma = comp_cpu.setSubComponent("dma", "phnsw.phnswDMA")
+dma.addParams({
+    "printFrequency" : "5",
+    "repeats" : "15",
+    "scratchSize" : 1024,   # 1K scratch
+    "maxAddr" : 4096,       # 4K mem
+    "scratchLineSize" : 64,
+    "memLineSize" : 64,
+    "clock" : "1GHz",
+    "maxOutstandingRequests" : 16,
+    "maxRequestsPerCycle" : 2,
+    "reqsToIssue" : 2,
+    "verbose" : 1
+    })
+iface_dma = dma.setSubComponent("memory", "memHierarchy.standardInterface")
+comp_scratch_dma = sst.Component("scratch_dma", "memHierarchy.Scratchpad")
+comp_scratch_dma.addParams({
+    "debug" : DEBUG_SCRATCH,
+    "debug_level" : 10,
+    "clock" : "2GHz",
+    "size" : "1KiB",
+    "scratch_line_size" : 64,
+    "memory_line_size" : 64,
+    "backing" : "malloc"
+})
+scratch_conv_dma = comp_scratch_dma.setSubComponent("backendConvertor", "memHierarchy.simpleMemScratchBackendConvertor")
+scratch_back_dma = scratch_conv_dma.setSubComponent("backend", "memHierarchy.simpleMem")
+scratch_back_dma.addParams({
+    "access_time" : "10ps",
+    "mem_size" : "1MiB"
+})
+scratch_conv_dma.addParams({
+    "debug_location" : 0,
+    "debug_level" : 10,
+})
+memctrl_dma = sst.Component("memory0", "memHierarchy.MemController")
+memctrl_dma.addParams({
+      "debug" : DEBUG_MEM,
+      "debug_level" : 10,
+      "clock" : "1GHz",
+      "addr_range_start" : 0,
+})
+memory_dma = memctrl_dma.setSubComponent("backend", "memHierarchy.simpleMem")
+memory_dma.addParams({
+    "access_time" : "1000 ns",
+    "mem_size" : "512MiB"
+})
+
+
 
 iface = comp_cpu.setSubComponent("memory", "memHierarchy.standardInterface")
 comp_scratch = sst.Component("scratch", "memHierarchy.Scratchpad")
@@ -63,6 +111,11 @@ link_cpu_scratch = sst.Link("link_cpu_scratch")
 link_cpu_scratch.connect( (iface, "port", "1000ps"), (comp_scratch, "cpu", "1000ps") )
 link_scratch_mem = sst.Link("link_scratch_mem")
 link_scratch_mem.connect( (comp_scratch, "memory", "100ps"), (memctrl, "direct_link", "100ps") )
+link_dma_scratch = sst.Link("link_dma_scratch")
+link_dma_scratch.connect( (iface_dma, "port", "10ps"), (comp_scratch_dma, "cpu", "10ps") )
+link_dma_scratch_mem = sst.Link("link_dma_scratch_mem")
+link_dma_scratch_mem.connect( (comp_scratch_dma, "memory", "10ps"), (memctrl_dma, "direct_link", "10ps") )
+
 
 #########################################################################
 ## Statistics
