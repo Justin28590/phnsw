@@ -99,7 +99,8 @@ Phnsw::~Phnsw() { }
 
 void Phnsw::init(unsigned int phase) {
     memory->init(phase);
-    // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of init.\n", phase);
+    dma->init(phase);
+    // std::cout << "Phnsw::init()\n";
 }
 
 void Phnsw::setup() {
