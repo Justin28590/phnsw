@@ -36,7 +36,10 @@ phnswDMA::~phnswDMA() { }
 
 void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size)
 {
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr " << addr << " and size " << size << std::endl;
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
+    << std::hex << addr
+    << std::dec << " and size " << size
+    << std::endl;
 }
 
 void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
