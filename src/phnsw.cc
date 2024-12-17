@@ -85,6 +85,9 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     Phnsw::timestamp = 0;
     Phnsw::num_events_issued = Phnsw::num_events_returned = 0;
 
+    dma = loadUserSubComponent<phnswDMAAPI>("dma");
+
+    sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
 }
 
 
@@ -150,6 +153,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
                 memory->send(req);
                 num_events_issued++;
             } else if (currentCycle == 50/*% 10 == 0*/) {
+                dma->DMAread(addr, size);
                 req = new SST::Interfaces::StandardMem::Read(addr, size);
                 output.output("ScratchCPU (%s) sending Read.%" PRIu64 " Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), req->getID(), addr, size, getCurrentSimCycle()/1000);
                 requests[req->getID()] = timestamp;
