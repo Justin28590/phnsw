@@ -12,6 +12,9 @@
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
 #include "phnsw.h"
+
+#ifndef _UTIL_H_
+#define _UTIL_H_
 #include "util.h"
 
 #include <sst/core/interfaces/stringEvent.h>
