@@ -139,12 +139,12 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
             SST::Interfaces::StandardMem::Request *req;
 
             // Send Read request
-            uint32_t size = 2;
-            SST::Interfaces::StandardMem::Addr addr = 0; // currentCycle * 8;
+            uint32_t size = 16;
+            SST::Interfaces::StandardMem::Addr addr = 16; // currentCycle * 8;
 
             if (currentCycle == 10 /*% 50 == 0*/) {
-                // std::vector<uint8_t> data(size, 0xff);
-                std::vector<uint8_t> data = {0xab, 0xcd};
+                std::vector<uint8_t> data(size, 0xea);
+                // std::vector<uint8_t> data = {0xab, 0xcd};
                 req = new SST::Interfaces::StandardMem::Write(addr, size, data);
                 req->setNoncacheable(); // [x] Key point! if non-cacheable not set, nothing will be written
                 output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
