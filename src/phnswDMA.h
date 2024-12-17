@@ -25,6 +25,7 @@
  */
     
 #include <sst/core/subcomponent.h>
+#include <sst/core/interfaces/stdMem.h>
 
 namespace SST {
 namespace phnsw {
@@ -49,8 +50,7 @@ public:
     virtual ~phnswDMAAPI() { }
 
     // These are the two functions described in the comment above
-    virtual int compute( int num ) =0;
-    virtual std::string compute( std::string comp) =0;
+    virtual void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) =0;
 
     // Serialization
     phnswDMAAPI();
@@ -80,8 +80,7 @@ public:
     phnswDMA(ComponentId_t id, Params& params);
     ~phnswDMA();
 
-    int compute( int num) override;
-    std::string compute( std::string comp ) override;
+    void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
 private:

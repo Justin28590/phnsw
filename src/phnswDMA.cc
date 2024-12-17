@@ -13,13 +13,9 @@
 // information, see the LICENSE file in the top level directory of the
 // distribution.
 
-
-// This include is ***REQUIRED*** 
-// for ALL SST implementation files
-// #include "sst_config.h"
+#include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
 #include "phnswDMA.h"
-
 
 using namespace SST;
 using namespace phnsw;
@@ -38,14 +34,9 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params) :
 
 phnswDMA::~phnswDMA() { }
 
-int phnswDMA::compute( int num )
+void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size)
 {
-    return num + amount;
-}
-
-std::string phnswDMA::compute ( std::string comp )
-{
-    return "(" + comp + ")" + " + " + std::to_string(amount);
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr " << addr << " and size " << size << std::endl;
 }
 
 void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
