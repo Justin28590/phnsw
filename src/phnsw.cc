@@ -16,6 +16,7 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 #include "util.h"
+#endif
 
 #include <sst/core/interfaces/stringEvent.h>
 #include <sst/core/realtimeAction.h>
