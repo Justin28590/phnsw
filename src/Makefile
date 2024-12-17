@@ -16,7 +16,7 @@ all: lib$(NAME).so install
 	$(CXX) $(CXXFLAGS) -c $<
 
 lib$(NAME).so: $(PHNSW_OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ *.o
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(PHNSW_OBJS)
 
 install:
 	sst-register $(NAME) $(NAME)_LIBDIR=$(CURDIR)
