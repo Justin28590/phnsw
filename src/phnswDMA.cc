@@ -77,17 +77,37 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
 
 phnswDMA::~phnswDMA() { }
 
-void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size)
-{
+void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) {
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
     << std::hex << addr
     << std::dec << " and size " << size
-    << " at cycle " << std::dec << getCurrentSimCycle()
+    << " at cycle " << std::dec << getCurrentSimTime()
     << std::endl;
 
     SST::Interfaces::StandardMem::Request *req;
     req = new SST::Interfaces::StandardMem::Read(addr, size);
     req->setNoncacheable();
+    output.output("%s\n", req->getString().c_str());
+    requests[req->getID()] = timestamp;
+    memory->send(req);
+    num_events_issued++;
+}
+
+void phnswDMA::DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) {
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAwrite()> DMA write called with addr 0x"
+    << std::hex << addr
+    << std::dec << " and size " << size
+    << " at cycle " << std::dec << getCurrentSimTime()
+    << " write " << std::hex;
+    for (auto element: *data) {
+        std::cout << static_cast<int>(element);
+    }
+    std::cout << std::dec << std::endl;
+
+    SST::Interfaces::StandardMem::Request *req;
+    req = new SST::Interfaces::StandardMem::Write(addr, size, *data);
+    req->setNoncacheable(); // [x] Key point! if non-cacheable not set, nothing will be written
+    output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %lu, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
     output.output("%s\n", req->getString().c_str());
     requests[req->getID()] = timestamp;
     memory->send(req);
@@ -100,9 +120,11 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
     SST_SER(amount);
 }
 
-void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *ev ) {
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime() << std::endl;
-    delete ev;
+void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
+    << "; respone: " << respone->getString()
+    << std::endl;
+    delete respone;
 }
 
 void phnswDMA::init(unsigned int phase) {

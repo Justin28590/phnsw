@@ -52,6 +52,7 @@ public:
 
     // These are the two functions described in the comment above
     virtual void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) =0;
+    virtual void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) =0;
 
     // Serialization
     phnswDMAAPI();
@@ -117,6 +118,7 @@ public:
     // virtual void finish() override;
 
     void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) override;
+    void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
     void handleEvent( SST::Interfaces::StandardMem::Request *ev );

@@ -120,7 +120,7 @@ void Phnsw::finish() {
 
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
-
+    // primaryComponentOKToEndSim();
     if (num_events_issued == reqsToIssue) {
         if (requests.empty()) {
             primaryComponentOKToEndSim();
@@ -137,22 +137,13 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
 
             if (currentCycle == 10 /*% 50 == 0*/) {
                 std::vector<uint8_t> data(size, 0xea);
-                // std::vector<uint8_t> data = {0xab, 0xcd};
-                req = new SST::Interfaces::StandardMem::Write(addr, size, data);
-                req->setNoncacheable(); // [x] Key point! if non-cacheable not set, nothing will be written
-                output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
-                output.output("%s\n", req->getString().c_str());
-                requests[req->getID()] = timestamp;
-                memory->send(req);
-                num_events_issued++;
+                dma->DMAwrite(addr, size, &data);
             } else if (currentCycle == 50/*% 10 == 0*/) {
                 dma->DMAread(addr, size);
-                req = new SST::Interfaces::StandardMem::Read(addr, size);
-                output.output("ScratchCPU (%s) sending Read.%" PRIu64 " Addr: %" PRIu64 ", Size: %u, simtime: %" PRIu64 "ns\n", getName().c_str(), req->getID(), addr, size, getCurrentSimCycle()/1000);
-                requests[req->getID()] = timestamp;
-                memory->send(req);
-                num_events_issued++;
+            } else if (currentCycle == 100) {
+                primaryComponentOKToEndSim();
             }
+            
         }
     }
     return false;
