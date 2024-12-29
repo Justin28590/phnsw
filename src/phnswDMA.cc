@@ -34,9 +34,11 @@ using namespace phnsw;
 /***********************************************************************************/
 // phnswDMADRAM
 
-phnswDMA::phnswDMA(ComponentId_t id, Params& params) :
-    phnswDMAAPI(id, params)  {
-    amount = params.find<int>("amount",  1);
+phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
+    phnswDMAAPI(id, params, time), clockTC(time)  {
+    setDefaultTimeBase(time);
+    // amount = params.find<int>("amount",  1);
+    amount = 1;
 
     // Memory parameters
     scratchSize = params.find<uint64_t>("scratchSize", 0);
@@ -66,7 +68,7 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params) :
     memory = loadUserSubComponent<SST::Interfaces::StandardMem>(
                 "memory",
                 SST::ComponentInfo::SHARE_NONE,
-                clockTC,
+                time,
                 new SST::Interfaces::StandardMem::Handler<phnswDMA>(this, &phnswDMA::handleEvent)
             );
 
@@ -80,6 +82,7 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size)
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
     << std::hex << addr
     << std::dec << " and size " << size
+    << " at cycle " << std::dec << getCurrentSimCycle()
     << std::endl;
 
     SST::Interfaces::StandardMem::Request *req;

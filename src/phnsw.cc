@@ -89,7 +89,9 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     Phnsw::timestamp = 0;
     Phnsw::num_events_issued = Phnsw::num_events_returned = 0;
 
-    dma = loadUserSubComponent<phnswDMAAPI>("dma");
+    Params dmaparams;
+
+    dma = loadUserSubComponent<phnswDMAAPI>("dma", SST::ComponentInfo::SHARE_NONE/* , dmaparams */, clockTC);
 
     sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
 }

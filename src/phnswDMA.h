@@ -45,9 +45,9 @@ public:
     /* 
      * Register this API with SST so that SST can match subcomponent slots to subcomponents 
      */
-    SST_ELI_REGISTER_SUBCOMPONENT_API(SST::phnsw::phnswDMAAPI)
+    SST_ELI_REGISTER_SUBCOMPONENT_API(SST::phnsw::phnswDMAAPI,TimeConverter*)
     
-    phnswDMAAPI(ComponentId_t id, Params& params) : SubComponent(id) { }
+    phnswDMAAPI(ComponentId_t id, Params& params, TimeConverter *time) : SubComponent(id) { }
     virtual ~phnswDMAAPI() { }
 
     // These are the two functions described in the comment above
@@ -106,7 +106,8 @@ public:
     )
 
 
-    phnswDMA(ComponentId_t id, Params& params);
+    phnswDMA(ComponentId_t id, Params& params, TimeConverter *time);
+    phnswDMA(const phnswDMA&) = delete;
     ~phnswDMA();
 
     // SST lifecycle functions (optional if not used)
