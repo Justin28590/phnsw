@@ -1,13 +1,49 @@
-// Copyright 2009-2024 NTESS. Under the terms
-// of Contract DE-NA0003525 with NTESS, the U.S.
-// Government retains certain rights in this software.
-//
-// Copyright (c) 2009-2024, NTESS
-// All rights reserved.
-//
-// This file is part of the SST software package. For license
-// information, see the LICENSE file in the top level directory of the
-// distribution.
+/*
+ *                        _oo0oo_
+ *                       o8888888o
+ *                       88" . "88
+ *                       (| -_- |)
+ *                       0\  =  /0
+ *                     ___/`---'\___
+ *                   .' \\|     |// '.
+ *                  / \\|||  :  |||// \
+ *                 / _||||| -:- |||||- \
+ *                |   | \\\  - /// |   |
+ *                | \_|  ''\---/''  |_/ |
+ *                \  .-\__  '-'  ___/-. /
+ *              ___'. .'  /--.--\  `. .'___
+ *           ."" '<  `.___\_<|>_/___.' >' "".
+ *          | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ *          \  \ `_.   \_ __\ /__ _/   .-` /  /
+ *      =====`-.____`.___ \_____/___.-`___.-'=====
+ *                        `=---='
+ * 
+ * 
+ *      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ *            佛祖保佑     永不宕机     永无BUG
+ * 
+ *        佛曰:  
+ *                写字楼里写字间，写字间里程序员；  
+ *                程序人员写程序，又拿程序换酒钱。  
+ *                酒醒只在网上坐，酒醉还来网下眠；  
+ *                酒醉酒醒日复日，网上网下年复年。  
+ *                但愿老死电脑间，不愿鞠躬老板前；  
+ *                奔驰宝马贵者趣，公交自行程序员。  
+ *                别人笑我忒疯癫，我笑自己命太贱；  
+ *                不见满街漂亮妹，哪个归得程序员？
+ */
+
+/*
+ * @Author: Zeng GuangYi tgy_scut2021@outlook.com
+ * @Date: 2024-12-17 18:05:53
+ * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
+ * @LastEditTime: 2024-12-30 16:27:01
+ * @FilePath: /phnsw/src/phnsw.h
+ * @Description: phnsw Core Component header
+ * 
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+ */
 
 #ifndef _PHNSW_H
 #define _PHNSW_H
@@ -31,12 +67,12 @@ public:
 /* SST ELI macros */
     /* Register component */
     SST_ELI_REGISTER_COMPONENT(
-    	Phnsw,              // Class name
-    	"phnsw",            // Name of library
-    	"phnsw",            // Lookup name for component
-    	SST_ELI_ELEMENT_VERSION( 1, 0, 0 ), // Component version
+    	Phnsw,                                          // Class name
+    	"phnsw",                                        // Name of library
+    	"phnsw",                                        // Lookup name for component
+    	SST_ELI_ELEMENT_VERSION( 1, 0, 0 ),             // Component version
         "Demonstration of an External Element for SST", // Description
-    	COMPONENT_CATEGORY_PROCESSOR    // Other options: 
+    	COMPONENT_CATEGORY_PROCESSOR                    // Other options: 
         //      COMPONENT_CATEGORY_MEMORY, 
         //      COMPONENT_CATEGORY_NETWORK, 
         //      COMPONENT_CATEGORY_UNCATEGORIZED

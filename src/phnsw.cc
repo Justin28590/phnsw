@@ -1,13 +1,13 @@
-// Copyright 2009-2024 NTESS. Under the terms
-// of Contract DE-NA0003525 with NTESS, the U.S.
-// Government retains certain rights in this software.
-//
-// Copyright (c) 2009-2024, NTESS
-// All rights reserved.
-//
-// This file is part of the SST software package. For license
-// information, see the LICENSE file in the top level directory of the
-// distribution.
+/*
+ * @Author: Zeng GuangYi tgy_scut2021@outlook.com
+ * @Date: 2024-12-17 23:36:26
+ * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
+ * @LastEditTime: 2024-12-30 16:41:03
+ * @FilePath: /phnsw/src/phnsw.cc
+ * @Description: phnsw Core Component
+ * 
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+ */
 
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
@@ -24,6 +24,18 @@
 using namespace SST;
 using namespace phnsw;
 
+/**
+ * @description: Constructor
+ *               Find and add parameters to local variables.
+ *               Init output.
+ *               Register a clock as clockTC.
+ *               Tell SST to wait until we authorize it to exit.
+ *               Initialize Standard Memory Interface.
+ *               Initialize DMA.
+ * @param {ComponentId_t} id comes from SST core.
+ * @param {Params&} params come from SST core.
+ * @return {*}
+ */
 Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     SST::Component(id), repeats(0) {
 
@@ -97,27 +109,56 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
 }
 
 
+/**
+ * @description: Destructor (unused)
+ * @return {*}
+ */
 Phnsw::~Phnsw() { }
 
+/**
+ * @description: lifecycle function: init,
+ *               init memory and dma.
+ * @param {unsigned int} phase from SST core
+ * @return {*}
+ */
 void Phnsw::init(unsigned int phase) {
     memory->init(phase);
     dma->init(phase);
-    // std::cout << "Phnsw::init()\n";
 }
 
+/**
+ * @description: lifecycle function: setup (unused)
+ * @return {*}
+ */
 void Phnsw::setup() {
     // output.verbose(CALL_INFO, 1, 0, "Component is being setup.\n");
 }
 
+/**
+ * @description: lifecycle function: complete (unused)
+ * @param {unsigned int} phase
+ * @return {*}
+ */
 void Phnsw::complete(unsigned int phase) {
     // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
 }
 
+/**
+ * @description: lifecycle function: finish (unuesd)
+ * @return {*}
+ */
 void Phnsw::finish() {
     // output.verbose(CALL_INFO, 1, 0, "Component is being finished.\n");
 }
 
 
+/**
+ * @description: Clock callback function
+ *               executed at the end of every clock tick
+ *               at some cycle (10 and 50), we send a request to memory
+ * @param {Cycle_t} currentCycle, passed into this function by memory
+ * @return {*}
+ */
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
     // primaryComponentOKToEndSim();
@@ -149,12 +190,19 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     return false;
 }
 
-// Memory response handler
+/**
+ * @description: (not used now, move to phnswDMA.h/cc::phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *ev ))
+ *               Memory response handler, execute when the memory returns a response.
+ *               Whenever received an respone, **remove it from requests map**,
+ *               and record some statistics.
+ * @param {Request *} response returned by memory.
+ * @return {*}
+ */
 void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
     std::unordered_map<uint64_t, SST::SimTime_t>::iterator i = requests.find(response->getID());
     sst_assert(i != requests.end(), CALL_INFO, -1, "Received response but request not found! ID = %" PRIu64 "\n", response->getID());
-    requests.erase(i);
-    // output.output("erase request %" PRIu64 " at %" PRIu64 "ns\n", response->getID(), getCurrentSimCycle()/1000);
+    requests.erase(i); // remove it from requests map
+    // display what message returned from memory
     output.output("Time.%" PRIu64 " at %s\n", getCurrentSimCycle()/1000, response->getString().c_str());
     num_events_returned++;
     delete response;

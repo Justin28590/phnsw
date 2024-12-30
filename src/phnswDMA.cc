@@ -1,17 +1,13 @@
-// Copyright 2009-2024 NTESS. Under the terms
-// of Contract DE-NA0003525 with NTESS, the U.S.
-// Government retains certain rights in this software.
-//
-// Copyright (c) 2009-2024, NTESS
-// All rights reserved.
-//
-// Portions are copyright of other developers:
-// See the file CONTRIBUTORS.TXT in the top level directory
-// of the distribution for more information.
-//
-// This file is part of the SST software package. For license
-// information, see the LICENSE file in the top level directory of the
-// distribution.
+/*
+ * @Author: Zeng GuangYi tgy_scut2021@outlook.com
+ * @Date: 2024-12-17 23:36:29
+ * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
+ * @LastEditTime: 2024-12-30 16:40:45
+ * @FilePath: /phnsw/src/phnswDMA.cc
+ * @Description: phnsw DMA Component header
+ * 
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+ */
 
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
@@ -34,11 +30,20 @@ using namespace phnsw;
 /***********************************************************************************/
 // phnswDMADRAM
 
+/**
+ * @description: Constructor,
+ *               Get clock from parent Component phnsw (clock: time),
+ *               Find and add parameters to local variables,
+ *               Initialize Standard Memory Interface.
+ * @param {ComponentId_t} id comes from SST core
+ * @param {Params&} params come from SST core
+ * @param {TimeConverter} *time comes from phnsw core (parent Component)
+ * @return {*}
+ */
 phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
     phnswDMAAPI(id, params, time), clockTC(time)  {
     setDefaultTimeBase(time);
-    // amount = params.find<int>("amount",  1);
-    amount = 1;
+    amount = params.find<int>("amount",  1);
 
     // Memory parameters
     scratchSize = params.find<uint64_t>("scratchSize", 0);
@@ -75,8 +80,18 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
     sst_assert(memory, CALL_INFO, -1, "Unable to load scratchInterface subcomponent\n");
 }
 
+/**
+ * @description: Destructor (unused)
+ * @return {*}
+ */
 phnswDMA::~phnswDMA() { }
 
+/**
+ * @description: DMA send Read request to memroy or scratchpad, call by phnsw core (parent Component).
+ * @param {Addr} addr to read
+ * @param {size_t} size of read data
+ * @return {*}
+ */
 void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) {
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
     << std::hex << addr
@@ -93,6 +108,13 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) {
     num_events_issued++;
 }
 
+/**
+ * @description: DMA send Write request to memroy or scratchpad, call by phnsw core (parent Component).
+ * @param {Addr} addr to write
+ * @param {size_t} size of write data
+ * @param {std::vector<uint8_t>*} data to write, generated in phnsw core (parent Component)
+ * @return {*}
+ */
 void phnswDMA::DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) {
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAwrite()> DMA write called with addr 0x"
     << std::hex << addr
@@ -114,12 +136,25 @@ void phnswDMA::DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, st
     num_events_issued++;
 }
 
+/**
+ * @description: Serializer function, I don't know what it does,
+ *               it just exist in the Subcomponent Template so I copy it.
+ * @param {serializer&} ser
+ * @return {*}
+ */
 void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
     SubComponent::serialize_order(ser);
 
     SST_SER(amount);
 }
 
+/**
+ * @description: Memory response handler, execute when the memory returns a response.
+                 Whenever received an respone, print some information about the respobne,
+                 and delete respone.
+ * @param {Request} *respone
+ * @return {*}
+ */
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
     << "; respone: " << respone->getString()
@@ -127,6 +162,12 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
     delete respone;
 }
 
+/**
+ * @description: lifecycle function: init.
+ *               Init memory interface of DMA.
+ * @param {unsigned int} phase from SST core
+ * @return {*}
+ */
 void phnswDMA::init(unsigned int phase) {
     memory->init(phase);
     std::cout << "memory->init(phase) called" << std::endl;

@@ -1,17 +1,13 @@
-// Copyright 2009-2024 NTESS. Under the terms
-// of Contract DE-NA0003525 with NTESS, the U.S.
-// Government retains certain rights in this software.
-//
-// Copyright (c) 2009-2024, NTESS
-// All rights reserved.
-//
-// Portions are copyright of other developers:
-// See the file CONTRIBUTORS.TXT in the top level directory
-// of the distribution for more information.
-//
-// This file is part of the SST software package. For license
-// information, see the LICENSE file in the top level directory of the
-// distribution.
+/*
+ * @Author: Zeng GuangYi tgy_scut2021@outlook.com
+ * @Date: 2024-12-17 23:36:32
+ * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
+ * @LastEditTime: 2024-12-30 16:42:30
+ * @FilePath: /phnsw/src/phnswDMA.h
+ * @Description: phnsw DMA Component header
+ * 
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+ */
 
 #ifndef _PHNSWDMAAPI_SUBCOMPONENT_H
 #define _PHNSWDMAAPI_SUBCOMPONENT_H
@@ -67,13 +63,13 @@ public:
     
     // Register this subcomponent with SST and tell SST that it implements the 'phnswDMAAPI' API
     SST_ELI_REGISTER_SUBCOMPONENT(
-            phnswDMA,     // Class name
-            "phnsw",         // Library name, the 'lib' in SST's lib.name format
-            "phnswDMA",   // Name used to refer to this subcomponent, the 'name' in SST's lib.name format
-            SST_ELI_ELEMENT_VERSION(1,0,0), // A version number
-            "SubComponent DMA that READ from DRAM", // Description
-            SST::phnsw::phnswDMAAPI // Fully qualified name of the API this subcomponent implements
-                                                            // A subcomponent can implment an API from any library
+            phnswDMA,                                   // Class name
+            "phnsw",                                    // Library name, the 'lib' in SST's lib.name format
+            "phnswDMA",                                 // Name used to refer to this subcomponent, the 'name' in SST's lib.name format
+            SST_ELI_ELEMENT_VERSION(1,0,0),             // A version number
+            "SubComponent DMA that READ from DRAM",     // Description
+            SST::phnsw::phnswDMAAPI                     // Fully qualified name of the API this subcomponent implements
+                                                        // A subcomponent can implment an API from any library
             )
 
     // Other ELI macros as needed for parameters, ports, statistics, and subcomponent slots
