@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2024-12-30 16:46:57
+ * @LastEditTime: 2025-02-13 23:05:32
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -106,6 +106,9 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     dma = loadUserSubComponent<phnswDMAAPI>("dma", SST::ComponentInfo::SHARE_NONE/* , dmaparams */, clockTC);
 
     sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
+
+    // Load Instructions
+    inst_file.open("instructions/instructions.asm");
 }
 
 
@@ -162,31 +165,39 @@ void Phnsw::finish() {
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
     // primaryComponentOKToEndSim();
-    if (num_events_issued == reqsToIssue) {
-        if (requests.empty()) {
-            primaryComponentOKToEndSim();
-            return true;
-        }
-    } else {
         // Can we issue another request this cycle?
-        if (requests.size() < reqQueueSize) {
-            SST::Interfaces::StandardMem::Request *req;
+        // if (requests.size() < reqQueueSize) {
+        //     SST::Interfaces::StandardMem::Request *req;
 
-            // Send Read request
-            uint32_t size = 16;
-            SST::Interfaces::StandardMem::Addr addr = 16; // currentCycle * 8;
+        //     // Send Read request
+        //     uint32_t size = 16;
+        //     SST::Interfaces::StandardMem::Addr addr = 16; // currentCycle * 8;
 
-            if (currentCycle == 10 /*% 50 == 0*/) {
-                std::vector<uint8_t> data(size, 0xea);
-                dma->DMAwrite(addr, size, &data);
-            } else if (currentCycle == 50/*% 10 == 0*/) {
-                dma->DMAread(addr, size);
-            } else if (currentCycle == 100) {
+        //     if (currentCycle == 10 /*% 50 == 0*/) {
+        //         std::vector<uint8_t> data(size, 0xea);
+        //         dma->DMAwrite(addr, size, &data);
+        //     } else if (currentCycle == 50/*% 10 == 0*/) {
+        //         dma->DMAread(addr, size);
+        //     } else if (currentCycle == 100) {
+        //         primaryComponentOKToEndSim();
+        //     }
+    std::getline(inst_file, inst_line);
+    uint8_t word_counts = 0;
+    std::stringstream ss(inst_line);
+    std::string word;
+    while (ss >> word) {
+        if (word.compare(";") == 0 | word.compare("\n") == 0) {
+            break; // Remove comments
+        }
+        if (word_counts == 0) { // Recognize Operation
+            if (word.compare("END") == 0) {
                 primaryComponentOKToEndSim();
             }
-            
         }
+        std::cout << word;
+        word_counts ++;
     }
+    std::cout << std::endl;
     return false;
 }
 
