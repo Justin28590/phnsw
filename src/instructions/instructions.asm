@@ -245,3 +245,5 @@ LOAD alu_res, i
 LOAD [1] , jmp_mode ; 设定跳转模式为: cmp_res=1
 
 JMP
+
+END
