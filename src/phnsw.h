@@ -48,6 +48,9 @@
 #ifndef _PHNSW_H
 #define _PHNSW_H
 
+#include <fstream>
+#include <sstream>
+
 #include <sst/core/component.h>
 #include <sst/core/interfaces/stdMem.h>
 #include <sst/core/params.h>
@@ -200,6 +203,10 @@ private:
 
     Register* Registers;
     
+    // instructions
+    std::ifstream inst_file;
+    std::string inst_line;
+
 };
 
 } } // namespace phnsw
