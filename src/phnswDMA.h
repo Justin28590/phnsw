@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2024-12-30 16:48:38
+ * @LastEditTime: 2024-12-31 02:14:24
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -104,7 +104,7 @@ public:
 
 
     phnswDMA(ComponentId_t id, Params& params, TimeConverter *time);
-    phnswDMA(const phnswDMA&) = delete;
+    // phnswDMA(const phnswDMA&) = delete;
     ~phnswDMA();
 
     // SST lifecycle functions (optional if not used)
