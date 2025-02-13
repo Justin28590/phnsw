@@ -5,3 +5,4 @@
 *log*
 .vscode/*
 tests/__pycache__/*
+readInstruction*
