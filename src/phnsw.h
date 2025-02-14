@@ -177,6 +177,16 @@ private:
     std::ifstream inst_file;
     std::string inst_line;
 
+public:
+    struct InstStruct {
+        std::string asmop;
+        std::string description;
+        int (Phnsw::*handeler) ();
+    };
+    static const InstStruct inst_struct[];
+    static const size_t inst_struct_size;
+    int inst_end();
+    int inst_dummy();
 };
 
 } } // namespace phnsw

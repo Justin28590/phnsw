@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-13 23:05:32
+ * @LastEditTime: 2025-02-14 16:43:36
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -190,8 +190,10 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
             break; // Remove comments
         }
         if (word_counts == 0) { // Recognize Operation
-            if (word.compare("END") == 0) {
-                primaryComponentOKToEndSim();
+            for (size_t i=0; i<inst_struct_size; i++) {
+                if (word.compare(Phnsw::inst_struct[i].asmop) == 0) {
+                    (this->*(inst_struct[i].handeler))(); // Exe module function
+                }
             }
         }
         std::cout << word;
@@ -219,3 +221,19 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
     delete response;
 }
 
+const Phnsw::InstStruct Phnsw::inst_struct[] = {
+    {"END", "end the simulation", &Phnsw::inst_end},
+    {"dummy", "dummy inst", &Phnsw::inst_dummy}
+};
+
+const size_t Phnsw::inst_struct_size = sizeof(Phnsw::inst_struct) / sizeof(Phnsw::InstStruct);
+
+int Phnsw::inst_end() {
+    std::cout << "end" << std::endl;
+    primaryComponentOKToEndSim();
+    return 0;
+}
+
+int Phnsw::inst_dummy() {
+    return 0;
+}
