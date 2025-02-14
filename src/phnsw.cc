@@ -152,6 +152,13 @@ void Phnsw::complete(unsigned int phase) {
  * @return {*}
  */
 void Phnsw::finish() {
+    inst_file.close();
+    for (auto i : Phnsw::img) {
+        for (auto inst : i) {
+            std::cout << " " << inst;
+        }
+    }
+    std::cout << std::endl;
     // output.verbose(CALL_INFO, 1, 0, "Component is being finished.\n");
 }
 
