@@ -3,6 +3,7 @@
 *.csv
 *.out
 *log*
-.vscode/*
+.vscode
 tests/__pycache__/*
 readInstruction*
+dummy.asm
