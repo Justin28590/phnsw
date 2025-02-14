@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-14 16:45:06
+ * @LastEditTime: 2025-02-15 01:44:37
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -170,25 +170,16 @@ void Phnsw::finish() {
  */
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
-    std::getline(inst_file, inst_line);
-    uint8_t word_counts = 0;
-    std::stringstream ss(inst_line);
-    std::string word;
-    while (ss >> word) {
-        if (word.compare(";") == 0 | word.compare("\n") == 0) {
-            break; // Remove comments
-        }
-        if (word_counts == 0) { // Recognize Operation
-            for (size_t i=0; i<inst_struct_size; i++) {
-                if (word.compare(Phnsw::inst_struct[i].asmop) == 0) {
-                    (this->*(inst_struct[i].handeler))(); // Exe module function
-                }
+    std::vector<string> inst_now;
+    inst_now = img[inst_time];
+    for (auto inst : inst_now) {
+        for(size_t i=0; i<inst_struct_size; i++) {
+            if (inst.compare(Phnsw::inst_struct[i].asmop) == 0) {
+                (this->*(inst_struct[i].handeler))(); // Exe module function
             }
         }
-        std::cout << word;
-        word_counts ++;
     }
-    std::cout << std::endl;
+    inst_time ++;
     return false;
 }
 
