@@ -2,7 +2,7 @@
 NAME=phnsw
 
 PHNSW_SOURCES := $(wildcard *.cc)
-PHNSW_HEADERS := $(wildcard *.h)
+PHNSW_HEADERS := $(wildcard *.h instructions/*.h)
 
 PHNSW_OBJS := $(patsubst %.cc,%.o,$(wildcard *.cc))
 
