@@ -175,7 +175,9 @@ private:
     
     // instructions
     std::ifstream inst_file;
-    std::string inst_line;
+    int inst_time;
+    std::vector<std::vector<std::string>> img;
+    void load_inst_creat_img();
 
 public:
     struct InstStruct {
