@@ -106,7 +106,10 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
 
     // Load Instructions
-    inst_file.open("instructions/instructions.asm");
+    inst_file.open("instructions/dummy.asm");
+    inst_time = 0;
+    Phnsw::load_inst_creat_img();
+    std::cout << "img created" << std::endl;
 }
 
 
@@ -216,4 +219,33 @@ int Phnsw::inst_end() {
 
 int Phnsw::inst_dummy() {
     return 0;
+}
+
+void Phnsw::load_inst_creat_img() {
+    std::ifstream img_file;
+    img_file.open("instructions/dummy.asm");
+    std::string inst_line;
+    while (std::getline(img_file, inst_line)) {
+        vector<string> inst_single_cycle;
+        uint8_t word_counts = 0;
+        std::stringstream ss(inst_line);
+        std::string word;
+        std::string operand1, operand2;
+        if (inst_line[0] == '\r' | inst_line[0] == ';' | inst_line.empty()) {
+            inst_single_cycle.push_back(std::string("timebreak"));
+            Phnsw::img.push_back(inst_single_cycle);
+            continue; // skip empty line or comment line
+        }
+        while (ss >> word) {
+            if (word.compare(";") == 0 | word.compare("\n") == 0) {
+                break; // Remove comments
+            } else if (word.compare(",") == 0) {
+                continue; // Remove single comma
+            }
+            // std::cout << (int) word_counts << ":" << word << " ";
+            inst_single_cycle.push_back(word);
+            word_counts ++;
+        }
+        Phnsw::img.push_back(inst_single_cycle);
+    }
 }
