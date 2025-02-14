@@ -210,7 +210,6 @@ const Phnsw::InstStruct Phnsw::inst_struct[] = {
 const size_t Phnsw::inst_struct_size = sizeof(Phnsw::inst_struct) / sizeof(Phnsw::InstStruct);
 
 int Phnsw::inst_end() {
-    std::cout << "end" << std::endl;
     primaryComponentOKToEndSim();
     return 0;
 }
