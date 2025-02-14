@@ -165,8 +165,6 @@ void Phnsw::finish() {
 
 /**
  * @description: Clock callback function
- *               executed at the end of every clock tick
- *               at some cycle (10 and 50), we send a request to memory
  * @param {Cycle_t} currentCycle, passed into this function by memory
  * @return {*}
  */
