@@ -86,8 +86,6 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     size += "B";
     params.insert("scratchpad_size", size);
 
-    // output.output("hello world!!!\n");
-
     memory = loadUserSubComponent<SST::Interfaces::StandardMem>(
                 "memory",
                 SST::ComponentInfo::SHARE_NONE,
