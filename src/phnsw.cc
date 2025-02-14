@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-14 16:43:36
+ * @LastEditTime: 2025-02-14 16:45:06
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -164,23 +164,6 @@ void Phnsw::finish() {
  */
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
-    // primaryComponentOKToEndSim();
-        // Can we issue another request this cycle?
-        // if (requests.size() < reqQueueSize) {
-        //     SST::Interfaces::StandardMem::Request *req;
-
-        //     // Send Read request
-        //     uint32_t size = 16;
-        //     SST::Interfaces::StandardMem::Addr addr = 16; // currentCycle * 8;
-
-        //     if (currentCycle == 10 /*% 50 == 0*/) {
-        //         std::vector<uint8_t> data(size, 0xea);
-        //         dma->DMAwrite(addr, size, &data);
-        //     } else if (currentCycle == 50/*% 10 == 0*/) {
-        //         dma->DMAread(addr, size);
-        //     } else if (currentCycle == 100) {
-        //         primaryComponentOKToEndSim();
-        //     }
     std::getline(inst_file, inst_line);
     uint8_t word_counts = 0;
     std::stringstream ss(inst_line);
