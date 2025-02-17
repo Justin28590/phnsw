@@ -238,6 +238,8 @@ void Phnsw::load_inst_creat_img() {
                 break; // Remove comments
             } else if (word.compare(",") == 0) {
                 continue; // Remove single comma
+            } else if (word.back() == ',') {
+                word.pop_back(); // Remove str back comma
             }
             // std::cout << (int) word_counts << ":" << word << " ";
             inst_single_cycle.push_back(word);
