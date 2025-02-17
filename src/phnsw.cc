@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-15 01:44:37
+ * @LastEditTime: 2025-02-17 21:19:18
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -109,7 +109,7 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     inst_file.open("instructions/dummy.asm");
     inst_time = 0;
     Phnsw::load_inst_creat_img();
-    std::cout << "img created" << std::endl;
+    output.verbose(CALL_INFO, 1, 0, "img created!\n");
 }
 
 
@@ -158,6 +158,7 @@ void Phnsw::finish() {
         for (auto inst : i) {
             std::cout << " " << inst;
         }
+    std::cout << std::endl;
     }
     std::cout << std::endl;
     // output.verbose(CALL_INFO, 1, 0, "Component is being finished.\n");
