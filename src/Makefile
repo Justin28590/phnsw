@@ -3,6 +3,8 @@ NAME=phnsw
 
 PHNSW_SOURCES := $(wildcard *.cc)
 PHNSW_HEADERS := $(wildcard *.h instructions/*.h)
+PHNSW_HEADERS += $(wildcard Register/*.h)
+
 
 PHNSW_OBJS := $(patsubst %.cc,%.o,$(wildcard *.cc))
 
@@ -13,6 +15,7 @@ LDFLAGS=$(shell sst-config --ELEMENT_LDFLAGS)
 all: lib$(NAME).so install
 
 %.o: %.cc $(PHNSW_SOURCES) $(PHNSW_HEADERS)
+	echo $(PHNSW_HEADERS)
 	$(CXX) $(CXXFLAGS) -c $<
 
 lib$(NAME).so: $(PHNSW_OBJS)
