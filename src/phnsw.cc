@@ -152,6 +152,7 @@ void Phnsw::complete(unsigned int phase) {
  * @return {*}
  */
 void Phnsw::finish() {
+    std::cout << "reg_name " << Registers.num1.reg_name << " long " << sizeof(Registers.raw1.reg) << std::endl;
     inst_file.close();
     for (auto i : Phnsw::img) {
         for (auto inst : i) {
