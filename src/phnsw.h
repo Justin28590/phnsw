@@ -61,7 +61,7 @@
 // Include file for the SubComponent API we'll use
 #include "phnswDMA.h"
 
-#include "Registers.h"
+#include "Register/Register.h"
 
 namespace SST {
 namespace phnsw {
@@ -170,8 +170,8 @@ private:
     uint64_t num_events_returned;    // number of events that have returned
 
     SST::phnsw::phnswDMAAPI *dma;
-
-    Register* Registers;
+  
+    Register Registers;
     
     // instructions
     std::ifstream inst_file;
