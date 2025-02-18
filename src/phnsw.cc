@@ -106,7 +106,6 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
 
     // Load Instructions
-    inst_file.open("instructions/dummy.asm");
     inst_time = 0;
     Phnsw::load_inst_creat_img();
     output.verbose(CALL_INFO, 1, 0, "img created!\n");
