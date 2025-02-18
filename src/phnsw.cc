@@ -172,9 +172,9 @@ void Phnsw::finish() {
  */
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
-    std::vector<string> inst_now;
-    inst_now = img[inst_time];
-    for (auto inst : inst_now) {
+    Phnsw::inst_count = 0;
+    inst_now = Phnsw::img[pc];
+    for (auto &inst : inst_now) {
         for(size_t i=0; i<inst_struct_size; i++) {
             if (inst.compare(Phnsw::inst_struct[i].asmop) == 0) {
                 (this->*(inst_struct[i].handeler))(); // Exe module function
@@ -182,6 +182,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
         }
     }
     inst_time ++;
+    pc ++;
     return false;
 }
 
@@ -220,6 +221,7 @@ int Phnsw::inst_dummy() {
 }
 
 void Phnsw::load_inst_creat_img() {
+    Phnsw::pc = 0; // reset pc
     std::ifstream img_file;
     img_file.open("instructions/dummy.asm");
     std::string inst_line;

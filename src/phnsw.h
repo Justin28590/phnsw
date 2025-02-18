@@ -180,6 +180,7 @@ private:
     void load_inst_creat_img();
 
 public:
+    int pc;
     struct InstStruct {
         std::string asmop;
         std::string description;
