@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-17 21:19:18
+ * @LastEditTime: 2025-02-18 15:04:59
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -152,14 +152,6 @@ void Phnsw::complete(unsigned int phase) {
  * @return {*}
  */
 void Phnsw::finish() {
-    std::cout << "reg_name " << Registers.num1.reg_name << " long " << sizeof(Registers.raw1.reg) << std::endl;
-    inst_file.close();
-    for (auto i : Phnsw::img) {
-        for (auto inst : i) {
-            std::cout << " " << inst;
-        }
-    std::cout << std::endl;
-    }
     std::cout << std::endl;
     // output.verbose(CALL_INFO, 1, 0, "Component is being finished.\n");
 }
@@ -256,5 +248,22 @@ void Phnsw::load_inst_creat_img() {
     }
     if (!inst_single_cycle.empty()) { // if EOF not empty or only 1 empty line
         Phnsw::img.push_back(inst_single_cycle);
+    }
+    Phnsw::display_img();
+    img_file.close();
+}
+
+void Phnsw::display_img() {
+    size_t display_time = 0;
+    for (auto &&i : Phnsw::img) {
+        std::cout << "time=" <<  display_time << "; ";
+        for (auto &&j : i) {
+            for (auto &&word : j) {
+                std::cout << word << " ";
+            }
+            std::cout << "; ";
+        }
+        display_time ++;
+        std::cout << std::endl;
     }
 }

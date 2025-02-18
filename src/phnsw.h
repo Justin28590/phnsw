@@ -185,6 +185,7 @@ private:
     std::vector<std::vector<std::string>> inst_now;
     int inst_count; // only will be 0 or 1
     void load_inst_creat_img();
+    void display_img();
 
 public:
     int pc;
