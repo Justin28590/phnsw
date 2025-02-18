@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-18 20:46:52
+ * @LastEditTime: 2025-02-18 21:43:59
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -214,12 +214,14 @@ int Phnsw::inst_mov() {
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "inst: " << "MOV ";
     std::cout << "reg2: " << inst_now[inst_count][2] << "; ";
+    // TODO reg1 imm recognition
     std::any reg2_type;
     try {
         reg2_type = Phnsw::Registers.find_match(inst_now[inst_count][2]);
     } catch (const char *e) {
         output.fatal(CALL_INFO, -1, "Register Error: %s %s!\n", e, inst_now[inst_count][2].c_str());
     }
+    // TODO reg1 to reg2 data movement
     std::cout << "type: ";
     std::cout << typeid(reg2_type).name();
     std::cout << " inst_now length=" << inst_now[inst_count].size();
