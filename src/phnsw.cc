@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-18 16:04:45
+ * @LastEditTime: 2025-02-18 20:46:52
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -210,7 +210,7 @@ int Phnsw::inst_end() {
     return 0;
 }
 
-int Phnsw::inst_mov() {    
+int Phnsw::inst_mov() {
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "inst: " << "MOV ";
     std::cout << "reg2: " << inst_now[inst_count][2] << "; ";
@@ -220,8 +220,9 @@ int Phnsw::inst_mov() {
     } catch (const char *e) {
         output.fatal(CALL_INFO, -1, "Register Error: %s %s!\n", e, inst_now[inst_count][2].c_str());
     }
+    std::cout << "type: ";
     std::cout << typeid(reg2_type).name();
-    std::cout << "inst_now length=" << inst_now[inst_count].size();
+    std::cout << " inst_now length=" << inst_now[inst_count].size();
     std::cout << std::endl;
     return 0;
 }

@@ -71,7 +71,6 @@ struct Register {
     }
 
     std::any find_match(std::string name) {
-        std::cout << "find match" << name;
         for (auto i : raw_array) {
             if (name == i.reg_name) {
                 return std::make_any<RegTemp<std::array<uint8_t, 128>>>(i);
