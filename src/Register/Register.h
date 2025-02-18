@@ -24,8 +24,6 @@ struct Register {
     std::vector<Register_template<uint32_t>> r32;
     std::vector<Register_template<uint64_t>> r64;
     std::vector<Register_template<__uint128_t>> r128;
-    // std::vector<Register_template<uint32_t[60]>> array_uint32_60;
-    // std::vector<Register_template<uint32_t[32]>> array_uint32_32;
     
     /* {"reg_name", "description", init value} */
     Register () {
