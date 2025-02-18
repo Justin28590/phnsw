@@ -172,7 +172,7 @@ private:
     SST::phnsw::phnswDMAAPI *dma;
   
     Register Registers;
-    
+
     // instructions
     std::ifstream inst_file;
     int inst_time;
