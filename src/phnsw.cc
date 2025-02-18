@@ -167,10 +167,11 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     inst_now = Phnsw::img[pc];
     for (auto &inst : inst_now) {
         for(size_t i=0; i<inst_struct_size; i++) {
-            if (inst.compare(Phnsw::inst_struct[i].asmop) == 0) {
+            if (inst[0].compare(Phnsw::inst_struct[i].asmop) == 0) {
                 (this->*(inst_struct[i].handeler))(); // Exe module function
             }
         }
+        inst_count ++;
     }
     inst_time ++;
     pc ++;
