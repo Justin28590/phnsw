@@ -69,6 +69,41 @@ struct Register {
         r32.push_back({"i20", "temp var", 0});
         r32.push_back({"dist1", "dist1", 0});
     }
+
+    std::any find_match(std::string name) {
+        std::cout << "find match" << name;
+        for (auto i : raw_array) {
+            if (name == i.reg_name) {
+                return std::make_any<RegTemp<std::array<uint8_t, 128>>>(i);
+            }
+        }
+        for (auto i : list_array) {
+            if (name == i.reg_name) {
+                return std::make_any<RegTemp<std::array<uint32_t, 10>>>(i);
+            }
+        }
+        for (auto i : r8) {
+            if (name == i.reg_name) {
+                return std::make_any<RegTemp<uint8_t>>(i);
+            }
+        }
+        for (auto i : r32) {
+            if (name == i.reg_name) {
+                return std::make_any<RegTemp<uint32_t>>(i);
+            }
+        }
+        for (auto i : r64) {
+            if (name == i.reg_name) {
+                return std::make_any<RegTemp<uint64_t>>(i);
+            }
+        }
+        for (auto i : r128) {
+            if (name == i.reg_name) {
+                return std::make_any<RegTemp<__uint128_t>>(i);
+            }
+        }
+        throw "no matched register";
+    }
 };
 
 } // namespace phnsw
