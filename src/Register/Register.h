@@ -11,19 +11,19 @@ namespace SST {
 namespace phnsw {
 
 template <typename T>
-struct Register_template {
+struct RegTemp {
     std::string reg_name;
     std::string description;
     T reg;
 };
 
 struct Register {
-    std::vector<Register_template<uint8_t[128]>> raw_array;
-    std::vector<Register_template<uint32_t[10]>> list_array;
-    std::vector<Register_template<uint8_t>> r8;
-    std::vector<Register_template<uint32_t>> r32;
-    std::vector<Register_template<uint64_t>> r64;
-    std::vector<Register_template<__uint128_t>> r128;
+    std::vector<RegTemp<std::array<uint8_t, 128>>> raw_array;
+    std::vector<RegTemp<std::array<uint32_t, 10>>> list_array;
+    std::vector<RegTemp<uint8_t>> r8;
+    std::vector<RegTemp<uint32_t>> r32;
+    std::vector<RegTemp<uint64_t>> r64;
+    std::vector<RegTemp<__uint128_t>> r128;
     
     /* {"reg_name", "description", init value} */
     Register () {
