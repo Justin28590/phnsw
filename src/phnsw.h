@@ -198,7 +198,7 @@ public:
     static const size_t inst_struct_size;
     // module functions
     int inst_end();
-    // int inst_move(uint64_t *r1, uint64_t *r2);
+    int inst_mov();
     int inst_dummy();
 };
 

@@ -198,6 +198,7 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 
 const Phnsw::InstStruct Phnsw::inst_struct[] = {
     {"END", "end the simulation", &Phnsw::inst_end},
+    {"MOV", "move data between regs", &Phnsw::inst_mov},
     {"dummy", "dummy inst", &Phnsw::inst_dummy}
 };
 
@@ -205,6 +206,14 @@ const size_t Phnsw::inst_struct_size = sizeof(Phnsw::inst_struct) / sizeof(Phnsw
 
 int Phnsw::inst_end() {
     primaryComponentOKToEndSim();
+    return 0;
+}
+
+int Phnsw::inst_mov() {    
+    std::cout << "pc=" << Phnsw::pc << " ";
+    std::cout << "inst: " << "MOV ";
+    std::cout << "inst_now length=" << inst_now[inst_count].size();
+    std::cout << std::endl;
     return 0;
 }
 
