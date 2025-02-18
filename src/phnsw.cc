@@ -225,15 +225,20 @@ void Phnsw::load_inst_creat_img() {
     std::ifstream img_file;
     img_file.open("instructions/dummy.asm");
     std::string inst_line;
+    std::vector<std::vector<std::string>> inst_single_cycle;
     while (std::getline(img_file, inst_line)) {
-        vector<string> inst_single_cycle;
+        std::vector<std::string> inst_this;
         uint8_t word_counts = 0;
         std::stringstream ss(inst_line);
         std::string word;
         std::string operand1, operand2;
         if (inst_line[0] == '\r' | inst_line[0] == ';' | inst_line.empty()) {
-            inst_single_cycle.push_back(std::string("timebreak"));
+            if (inst_single_cycle.empty()) {
+                continue; // filter EOF empty lines
+            }
+            
             Phnsw::img.push_back(inst_single_cycle);
+            inst_single_cycle.clear();
             continue; // skip empty line or comment line
         }
         while (ss >> word) {
@@ -244,10 +249,12 @@ void Phnsw::load_inst_creat_img() {
             } else if (word.back() == ',') {
                 word.pop_back(); // Remove str back comma
             }
-            // std::cout << (int) word_counts << ":" << word << " ";
-            inst_single_cycle.push_back(word);
+            inst_this.push_back(word);
             word_counts ++;
         }
+        inst_single_cycle.push_back(inst_this);
+    }
+    if (!inst_single_cycle.empty()) { // if EOF not empty or only 1 empty line
         Phnsw::img.push_back(inst_single_cycle);
     }
 }

@@ -176,7 +176,14 @@ private:
     // instructions
     std::ifstream inst_file;
     int inst_time;
-    std::vector<std::vector<std::string>> img;
+    /*
+    most inside: 1 instruction (1 or 3 string elements)
+    middle inside: instructions for this clk (maybe 1 or 2 vec elements)
+    out: instructions fro all clks (very lot vec elements)
+    */
+    std::vector<std::vector<std::vector<std::string>>> img;
+    std::vector<std::vector<std::string>> inst_now;
+    int inst_count; // only will be 0 or 1
     void load_inst_creat_img();
 
 public:
