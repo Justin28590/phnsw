@@ -5,6 +5,7 @@
 *log*
 .vscode
 tests/__pycache__/*
-readInstruction*
+**/instructions/*.h
+**/instructions/*.cc
 dummy.asm
 **/Register/**.cc
