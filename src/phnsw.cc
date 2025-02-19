@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-19 15:06:21
+ * @LastEditTime: 2025-02-19 15:08:40
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -226,7 +226,6 @@ int Phnsw::inst_mov() {
     std::memcpy(src_ptr, &temp, src_size);
     std::cout << "src init as " << *(uint32_t *) src_ptr << "; ";
     std::memcpy(rd_ptr, src_ptr, src_size);
-    // TODO reg1 to reg2 data movement
     std::cout << " inst_now length=" << inst_now[inst_count].size();
     std::cout << std::endl;
     std::cout << "after copy rd=" /* << std::hex */ << *(uint32_t *) rd_ptr << std::endl;
