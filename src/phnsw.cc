@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-19 15:08:40
+ * @LastEditTime: 2025-02-19 15:45:51
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -168,7 +168,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     for (auto &inst : inst_now) {
         for(size_t i=0; i<inst_struct_size; i++) {
             if (inst[0].compare(Phnsw::inst_struct[i].asmop) == 0) {
-                (this->*(inst_struct[i].handeler))(); // Exe module function
+                (this->*(inst_struct[i].handeler))(); // Exe instruction function
             }
         }
         inst_count ++;
