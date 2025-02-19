@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-18 21:43:59
+ * @LastEditTime: 2025-02-19 15:06:21
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -211,21 +211,25 @@ int Phnsw::inst_end() {
 }
 
 int Phnsw::inst_mov() {
+    std::string src_name = inst_now[inst_count][1];
+    std::string rd_name = inst_now[inst_count][2];
+    size_t src_size;
+    size_t rd_size;
+    void* src_ptr = Phnsw::Registers.find_match(src_name, src_size);
+    void* rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
+    std::cout << "before rd=" << *(uint32_t *) rd_ptr << std::endl;
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "inst: " << "MOV ";
+    std::cout << "reg1: " << inst_now[inst_count][1] << "; ";
     std::cout << "reg2: " << inst_now[inst_count][2] << "; ";
-    // TODO reg1 imm recognition
-    std::any reg2_type;
-    try {
-        reg2_type = Phnsw::Registers.find_match(inst_now[inst_count][2]);
-    } catch (const char *e) {
-        output.fatal(CALL_INFO, -1, "Register Error: %s %s!\n", e, inst_now[inst_count][2].c_str());
-    }
+    uint8_t temp = 't';
+    std::memcpy(src_ptr, &temp, src_size);
+    std::cout << "src init as " << *(uint32_t *) src_ptr << "; ";
+    std::memcpy(rd_ptr, src_ptr, src_size);
     // TODO reg1 to reg2 data movement
-    std::cout << "type: ";
-    std::cout << typeid(reg2_type).name();
     std::cout << " inst_now length=" << inst_now[inst_count].size();
     std::cout << std::endl;
+    std::cout << "after copy rd=" /* << std::hex */ << *(uint32_t *) rd_ptr << std::endl;
     return 0;
 }
 

@@ -70,35 +70,41 @@ struct Register {
         r32.push_back({"dist1", "dist1", 0});
     }
 
-    std::any find_match(std::string name) {
-        for (auto i : raw_array) {
+    void* find_match(std::string name, size_t &reg_size) {
+        for (auto &&i : raw_array) {
             if (name == i.reg_name) {
-                return std::make_any<RegTemp<std::array<uint8_t, 128>>>(i);
+                reg_size = sizeof(i.reg);
+                return &i.reg;
             }
         }
-        for (auto i : list_array) {
+        for (auto &&i : list_array) {
             if (name == i.reg_name) {
-                return std::make_any<RegTemp<std::array<uint32_t, 10>>>(i);
+                reg_size = sizeof(i.reg);
+                return &i.reg;
             }
         }
-        for (auto i : r8) {
+        for (auto &&i : r8) {
             if (name == i.reg_name) {
-                return std::make_any<RegTemp<uint8_t>>(i);
+                reg_size = sizeof(i.reg);
+                return &i.reg;
             }
         }
-        for (auto i : r32) {
+        for (auto &&i : r32) {
             if (name == i.reg_name) {
-                return std::make_any<RegTemp<uint32_t>>(i);
+                reg_size = sizeof(i.reg);
+                return &i.reg;
             }
         }
-        for (auto i : r64) {
+        for (auto &&i : r64) {
             if (name == i.reg_name) {
-                return std::make_any<RegTemp<uint64_t>>(i);
+                reg_size = sizeof(i.reg);
+                return &i.reg;
             }
         }
-        for (auto i : r128) {
+        for (auto &&i : r128) {
             if (name == i.reg_name) {
-                return std::make_any<RegTemp<__uint128_t>>(i);
+                reg_size = sizeof(i.reg);
+                return &i.reg;
             }
         }
         throw "no matched register";
