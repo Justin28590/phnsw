@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-19 15:45:51
+ * @LastEditTime: 2025-02-19 16:00:31
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -215,8 +215,18 @@ int Phnsw::inst_mov() {
     std::string rd_name = inst_now[inst_count][2];
     size_t src_size;
     size_t rd_size;
-    void* src_ptr = Phnsw::Registers.find_match(src_name, src_size);
-    void* rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
+    void* src_ptr;
+    void* rd_ptr;
+    try {
+        src_ptr = Phnsw::Registers.find_match(src_name, src_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_name);
+    }
+    try {
+        rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd_name);
+    }
     std::cout << "before rd=" << *(uint32_t *) rd_ptr << std::endl;
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "inst: " << "MOV ";
