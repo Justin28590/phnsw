@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-19 16:00:31
+ * @LastEditTime: 2025-02-20 16:41:03
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -220,12 +220,15 @@ int Phnsw::inst_mov() {
     try {
         src_ptr = Phnsw::Registers.find_match(src_name, src_size);
     } catch (char *e) {
-        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_name);
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_name.c_str());
     }
     try {
         rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
     } catch (char *e) {
-        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd_name);
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd_name.c_str());
+    }
+    if (rd_size > src_size) { // if rd_size > src_size, reset rd
+        std::memset(rd_ptr, 0, rd_size);
     }
     std::cout << "before rd=" << *(uint32_t *) rd_ptr << std::endl;
     std::cout << "pc=" << Phnsw::pc << " ";
