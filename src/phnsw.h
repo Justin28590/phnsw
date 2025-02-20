@@ -200,6 +200,7 @@ public:
     // module functions
     int inst_end();
     int inst_mov();
+    int inst_add();
     int inst_dummy();
 };
 
