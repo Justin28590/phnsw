@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-20 17:37:32
+ * @LastEditTime: 2025-02-20 18:27:48
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -211,16 +211,26 @@ int Phnsw::inst_end() {
 }
 
 int Phnsw::inst_mov() {
+    uint64_t imm;
     std::string src_name = inst_now[inst_count][1];
     std::string rd_name = inst_now[inst_count][2];
     size_t src_size;
     size_t rd_size;
     void* src_ptr;
     void* rd_ptr;
-    try {
-        src_ptr = Phnsw::Registers.find_match(src_name, src_size);
-    } catch (char *e) {
-        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_name.c_str());
+    void* imm_ptr = &imm;
+    if (src_name.back() == ']' && src_name[0] == '[') { // is imm
+        std::cout << "is imm" << std::endl;
+        src_ptr = imm_ptr;
+        src_size = sizeof(imm);
+        imm = std::stoull(src_name.substr(1, src_name.size() - 2));
+    } else {
+        std::cout << "is reg" << std::endl;
+        try {
+            src_ptr = Phnsw::Registers.find_match(src_name, src_size);
+        } catch (char *e) {
+            output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_name.c_str());
+        }
     }
     try {
         rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
@@ -235,9 +245,9 @@ int Phnsw::inst_mov() {
     std::cout << "inst: " << "MOV ";
     std::cout << "reg1: " << inst_now[inst_count][1] << "; ";
     std::cout << "reg2: " << inst_now[inst_count][2] << "; ";
-    uint8_t temp = 't';
-    std::memcpy(src_ptr, &temp, src_size);
-    std::cout << "src init as " << std::bitset<sizeof(uint32_t) * 8>(*(uint32_t *) src_ptr) << "; ";
+    // uint8_t temp = 't';
+    // std::memcpy(src_ptr, &temp, src_size);
+    // std::cout << "src init as " << std::bitset<sizeof(uint32_t) * 8>(*(uint32_t *) src_ptr) << "; ";
     std::memcpy(rd_ptr, src_ptr, min(src_size, rd_size));
     std::cout << " inst_now length=" << inst_now[inst_count].size() << "; ";
     std::cout << "after copy rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
