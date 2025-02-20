@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-20 18:27:48
+ * @LastEditTime: 2025-02-20 18:36:10
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -199,6 +199,7 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 const Phnsw::InstStruct Phnsw::inst_struct[] = {
     {"END", "end the simulation", &Phnsw::inst_end},
     {"MOV", "move data between regs", &Phnsw::inst_mov},
+    {"ADD", "add two numbers", &Phnsw::inst_add},
     {"dummy", "dummy inst", &Phnsw::inst_dummy}
 };
 
@@ -251,6 +252,30 @@ int Phnsw::inst_mov() {
     std::memcpy(rd_ptr, src_ptr, min(src_size, rd_size));
     std::cout << " inst_now length=" << inst_now[inst_count].size() << "; ";
     std::cout << "after copy rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
+    return 0;
+}
+
+int Phnsw::inst_add() {
+    void *src1_ptr, *src2_ptr, *rd_ptr;
+    size_t src1_size, src2_size, rd_size;
+    std::string src1_name = "num1";
+    std::string src2_name = "num2";
+    std::string rd_name = "alu_res";
+    try {
+        src1_ptr = Phnsw::Registers.find_match(src1_name, src1_size);
+        src2_ptr = Phnsw::Registers.find_match(src2_name, src2_size);
+        rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s", e);
+    }
+    std::cout << "pc=" << Phnsw::pc << " ";
+    std::cout << "before rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << "; ";
+    std::cout << "inst: " << "ADD ";
+    std::cout << "reg1: " << src1_name << "; ";
+    std::cout << "reg2: " << src2_name << "; ";
+    std::cout << "rd: " << rd_name << "; ";
+    *(uint8_t *) rd_ptr = *(uint8_t *) src1_ptr + *(uint8_t *) src2_ptr;
+    std::cout << "after add rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
     return 0;
 }
 
