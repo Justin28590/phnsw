@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-20 16:41:03
+ * @LastEditTime: 2025-02-20 17:37:32
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -230,18 +230,17 @@ int Phnsw::inst_mov() {
     if (rd_size > src_size) { // if rd_size > src_size, reset rd
         std::memset(rd_ptr, 0, rd_size);
     }
-    std::cout << "before rd=" << *(uint32_t *) rd_ptr << std::endl;
     std::cout << "pc=" << Phnsw::pc << " ";
+    std::cout << "before rd=" << *(uint32_t *) rd_ptr << "; ";
     std::cout << "inst: " << "MOV ";
     std::cout << "reg1: " << inst_now[inst_count][1] << "; ";
     std::cout << "reg2: " << inst_now[inst_count][2] << "; ";
     uint8_t temp = 't';
     std::memcpy(src_ptr, &temp, src_size);
-    std::cout << "src init as " << *(uint32_t *) src_ptr << "; ";
-    std::memcpy(rd_ptr, src_ptr, src_size);
-    std::cout << " inst_now length=" << inst_now[inst_count].size();
-    std::cout << std::endl;
-    std::cout << "after copy rd=" /* << std::hex */ << *(uint32_t *) rd_ptr << std::endl;
+    std::cout << "src init as " << std::bitset<sizeof(uint32_t) * 8>(*(uint32_t *) src_ptr) << "; ";
+    std::memcpy(rd_ptr, src_ptr, min(src_size, rd_size));
+    std::cout << " inst_now length=" << inst_now[inst_count].size() << "; ";
+    std::cout << "after copy rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
     return 0;
 }
 
