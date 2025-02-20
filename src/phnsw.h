@@ -57,6 +57,7 @@
 #include <sst/core/rng/marsaglia.h>
 
 #include <unordered_map>
+#include <bitset>
 
 // Include file for the SubComponent API we'll use
 #include "phnswDMA.h"
