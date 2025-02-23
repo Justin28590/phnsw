@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-20 18:36:10
+ * @LastEditTime: 2025-02-23 12:55:10
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -258,22 +258,15 @@ int Phnsw::inst_mov() {
 int Phnsw::inst_add() {
     void *src1_ptr, *src2_ptr, *rd_ptr;
     size_t src1_size, src2_size, rd_size;
-    std::string src1_name = "num1";
-    std::string src2_name = "num2";
-    std::string rd_name = "alu_res";
-    try {
-        src1_ptr = Phnsw::Registers.find_match(src1_name, src1_size);
-        src2_ptr = Phnsw::Registers.find_match(src2_name, src2_size);
-        rd_ptr = Phnsw::Registers.find_match(rd_name, rd_size);
-    } catch (char *e) {
-        output.fatal(CALL_INFO, -1, "ERROR: %s", e);
-    }
+    src1_ptr = &Phnsw::Registers.r8["num1"].reg;
+    src2_ptr = &Phnsw::Registers.r8["num2"].reg;
+    rd_ptr = &Phnsw::Registers.r8["alu_res"].reg;
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "before rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << "; ";
     std::cout << "inst: " << "ADD ";
-    std::cout << "reg1: " << src1_name << "; ";
-    std::cout << "reg2: " << src2_name << "; ";
-    std::cout << "rd: " << rd_name << "; ";
+    std::cout << "reg1: num1; ";
+    std::cout << "reg2: num2; ";
+    std::cout << "rd: alu_res; ";
     *(uint8_t *) rd_ptr = *(uint8_t *) src1_ptr + *(uint8_t *) src2_ptr;
     std::cout << "after add rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
     return 0;
