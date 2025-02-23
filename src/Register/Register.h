@@ -23,12 +23,10 @@ struct RegTemp {
 };
 
 struct Register {
-    // std::unordered_map<std::string, RegTemp<std::array<uint8_t, 128>>> raw_array;
-    // std::unordered_map<std::string, RegTemp<std::array<uint32_t, 10>>> list_array;
-    // std::unordered_map<std::string, RegTemp<uint8_t>> r8;
-    // std::unordered_map<std::string, RegTemp<uint32_t>> r32;
-    // std::unordered_map<std::string, RegTemp<uint64_t>> r64;
-    // std::unordered_map<std::string, RegTemp<__uint128_t>> r128;
+    // @description: all reg map
+    // @param {size_t} size
+    // @param {std::string} description
+    // @param {void *} reg_ptr<std::array<uint8_t,  128>, std::array<uint32_t, 10>, uint8_t, uint32_t, uint64_t>
     std::unordered_map<std::string, void*> reg_map;
     
     /* {"reg_name", "description", init value} */
