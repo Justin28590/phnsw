@@ -201,6 +201,7 @@ public:
     int inst_end();
     int inst_mov();
     int inst_add();
+    int inst_info();
     int inst_dummy();
 };
 
