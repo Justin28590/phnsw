@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-23 15:49:02
+ * @LastEditTime: 2025-02-26 17:15:10
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -111,6 +111,7 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     output.verbose(CALL_INFO, 1, 0, "img created!\n");
 }
 
+Register Phnsw::Registers;
 
 /**
  * @description: Destructor (unused)
@@ -163,12 +164,20 @@ void Phnsw::finish() {
  */
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
+    for (auto &&i : inst_struct) {
+        if (i.rd != "nord") {
+            size_t rd_size;
+            void *rd = Registers.find_match(i.rd, rd_size);
+            std::memcpy(rd, i.rd_temp, rd_size);
+        }
+    }
+
     Phnsw::inst_count = 0;
     inst_now = Phnsw::img[pc];
     for (auto &inst : inst_now) {
-        for(size_t i=0; i<inst_struct_size; i++) {
-            if (inst[0].compare(Phnsw::inst_struct[i].asmop) == 0) {
-                (this->*(inst_struct[i].handeler))(); // Exe instruction function
+        for(auto &&i : inst_struct) {
+            if (inst[0].compare(i.asmop) == 0) {
+                (this->*(i.handeler))(i.rd_temp); // Exe instruction function
             }
         }
         inst_count ++;
@@ -196,23 +205,23 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
     delete response;
 }
 
-const Phnsw::InstStruct Phnsw::inst_struct[] = {
-    {"END", "end the simulation", &Phnsw::inst_end},
-    {"MOV", "move data between regs", &Phnsw::inst_mov},
-    {"ADD", "add two numbers", &Phnsw::inst_add},
-    {"INFO", "print reg info" , &Phnsw::inst_info},
-    {"dummy", "dummy inst", &Phnsw::inst_dummy}
+const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
+    {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",     1},
+    {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",     1},
+    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  2},
+    {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
+    {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
 };
 
 const size_t Phnsw::inst_struct_size = sizeof(Phnsw::inst_struct) / sizeof(Phnsw::InstStruct);
 
-int Phnsw::inst_end() {
+int Phnsw::inst_end(void *rd_temp_ptr) {
     std::cout << "pc=" << Phnsw::pc << " " << "inst: " << "END" << std::endl;
     primaryComponentOKToEndSim();
     return 0;
 }
 
-int Phnsw::inst_mov() {
+int Phnsw::inst_mov(void *rd_temp_ptr) {
     uint64_t imm;
     std::string src_name = inst_now[inst_count][1];
     std::string rd_name = inst_now[inst_count][2];
@@ -256,24 +265,25 @@ int Phnsw::inst_mov() {
     return 0;
 }
 
-int Phnsw::inst_add() {
+int Phnsw::inst_add(void *rd_temp_ptr) {
     uint8_t *src1_ptr, *src2_ptr, *rd_ptr;
     size_t src1_size, src2_size, rd_size;
     src1_ptr = (uint8_t *) Phnsw::Registers.find_match("num1", src1_size);
     src2_ptr = (uint8_t *) Phnsw::Registers.find_match("num2", src2_size);
     rd_ptr = (uint8_t *) Phnsw::Registers.find_match("alu_res", rd_size);
+    rd_ptr = (uint8_t *) rd_temp_ptr;
     // std::cout << "pc=" << Phnsw::pc << " ";
     // std::cout << "before rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << "; ";
     // std::cout << "inst: " << "ADD ";
     // std::cout << "reg1: num1; ";
     // std::cout << "reg2: num2; ";
-    // std::cout << "rd: alu_res; ";
+    // std::cout << "rd: rd_temp; ";
     *rd_ptr = *src1_ptr + *src2_ptr;
     // std::cout << "after add rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
     return 0;
 }
 
-int Phnsw::inst_info() {
+int Phnsw::inst_info(void *rd_temp_ptr) {
     size_t rd_size;
     uint64_t tmp_value;
     void *rd_ptr = Phnsw::Registers.find_match(inst_now[inst_count][1], rd_size);
@@ -297,7 +307,7 @@ int Phnsw::inst_info() {
     return 0;
 }
 
-int Phnsw::inst_dummy() {
+int Phnsw::inst_dummy(void *rd_temp_ptr) {
     return 0;
 }
 

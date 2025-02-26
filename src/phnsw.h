@@ -172,7 +172,7 @@ private:
 
     SST::phnsw::phnswDMAAPI *dma;
   
-    Register Registers;
+    static Register Registers;
 
     // instructions
     std::ifstream inst_file;
@@ -193,16 +193,24 @@ public:
     struct InstStruct {
         std::string asmop;
         std::string description;
-        int (Phnsw::*handeler) ();
+        int (Phnsw::*handeler) (void *rd_temp_ptr);
+        std::string rd;
+        void *rd_temp;
+        uint32_t stages;
+
+        InstStruct(std::string asmop, std::string description, int (Phnsw::*handeler) (void *rd_temp_ptr), std::string rd, uint32_t stages) :
+            asmop(asmop), description(description), handeler(handeler), rd(rd), stages(stages) {
+                rd_temp = new char[Phnsw::Registers.find_size(rd)];
+            }
     };
-    static const InstStruct inst_struct[];
+    static const std::vector<InstStruct> inst_struct;
     static const size_t inst_struct_size;
     // module functions
-    int inst_end();
-    int inst_mov();
-    int inst_add();
-    int inst_info();
-    int inst_dummy();
+    int inst_end(void *rd_temp_ptr);
+    int inst_mov(void *rd_temp_ptr);
+    int inst_add(void *rd_temp_ptr);
+    int inst_info(void *rd_temp_ptr);
+    int inst_dummy(void *rd_temp_ptr);
 };
 
 } } // namespace phnsw

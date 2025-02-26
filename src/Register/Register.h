@@ -98,6 +98,14 @@ struct Register {
         }
         throw "Register type not found";
     }
+
+    size_t find_size(const std::string& name) {
+        if (reg_map.find(name) == reg_map.end()) {
+            // throw "Register not found: ";
+            return 0;
+        }
+        return *(uint64_t *) (reg_map[name]);
+    }
 };
 
 } // namespace phnsw
