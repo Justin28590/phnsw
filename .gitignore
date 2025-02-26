@@ -3,6 +3,7 @@
 *.csv
 *.out
 *log*
+*.dot
 .vscode
 tests/__pycache__/*
 **/instructions/*.h
