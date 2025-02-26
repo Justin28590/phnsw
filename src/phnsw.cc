@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-26 17:15:10
+ * @LastEditTime: 2025-02-26 17:57:25
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -164,11 +164,20 @@ void Phnsw::finish() {
  */
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
-    for (auto &&i : inst_struct) {
+    for (auto &i : inst_struct) {
         if (i.rd != "nord") {
-            size_t rd_size;
-            void *rd = Registers.find_match(i.rd, rd_size);
-            std::memcpy(rd, i.rd_temp, rd_size);
+            std::cout << "pc=" << Phnsw::pc << " ";
+            if (*i.stage_now == i.stages) {
+                std::cout << "pipeline end";
+                size_t rd_size;
+                void *rd = Registers.find_match(i.rd, rd_size);
+                std::memcpy(rd, i.rd_temp, rd_size);
+                *i.stage_now = 0;
+            } else if (*i.stage_now != 0) {
+                std::cout << "pipeline stage " << *i.stage_now;
+                *i.stage_now = *i.stage_now + 1;
+            }
+            std::cout << std::endl;
         }
     }
 
@@ -177,7 +186,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     for (auto &inst : inst_now) {
         for(auto &&i : inst_struct) {
             if (inst[0].compare(i.asmop) == 0) {
-                (this->*(i.handeler))(i.rd_temp); // Exe instruction function
+                (this->*(i.handeler))(i.rd_temp, i.stage_now); // Exe instruction function
             }
         }
         inst_count ++;
@@ -208,20 +217,20 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",     1},
     {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",     1},
-    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  2},
+    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  1},
     {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
     {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
 };
 
 const size_t Phnsw::inst_struct_size = sizeof(Phnsw::inst_struct) / sizeof(Phnsw::InstStruct);
 
-int Phnsw::inst_end(void *rd_temp_ptr) {
+int Phnsw::inst_end(void *rd_temp_ptr, uint32_t *stage_now) {
     std::cout << "pc=" << Phnsw::pc << " " << "inst: " << "END" << std::endl;
     primaryComponentOKToEndSim();
     return 0;
 }
 
-int Phnsw::inst_mov(void *rd_temp_ptr) {
+int Phnsw::inst_mov(void *rd_temp_ptr, uint32_t *stage_now) {
     uint64_t imm;
     std::string src_name = inst_now[inst_count][1];
     std::string rd_name = inst_now[inst_count][2];
@@ -265,7 +274,8 @@ int Phnsw::inst_mov(void *rd_temp_ptr) {
     return 0;
 }
 
-int Phnsw::inst_add(void *rd_temp_ptr) {
+int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
     uint8_t *src1_ptr, *src2_ptr, *rd_ptr;
     size_t src1_size, src2_size, rd_size;
     src1_ptr = (uint8_t *) Phnsw::Registers.find_match("num1", src1_size);
@@ -283,7 +293,7 @@ int Phnsw::inst_add(void *rd_temp_ptr) {
     return 0;
 }
 
-int Phnsw::inst_info(void *rd_temp_ptr) {
+int Phnsw::inst_info(void *rd_temp_ptr, uint32_t *stage_now) {
     size_t rd_size;
     uint64_t tmp_value;
     void *rd_ptr = Phnsw::Registers.find_match(inst_now[inst_count][1], rd_size);
@@ -307,7 +317,7 @@ int Phnsw::inst_info(void *rd_temp_ptr) {
     return 0;
 }
 
-int Phnsw::inst_dummy(void *rd_temp_ptr) {
+int Phnsw::inst_dummy(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
