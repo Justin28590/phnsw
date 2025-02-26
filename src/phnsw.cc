@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-26 17:57:25
+ * @LastEditTime: 2025-02-26 18:04:36
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -166,15 +166,15 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
     for (auto &i : inst_struct) {
         if (i.rd != "nord") {
-            std::cout << "pc=" << Phnsw::pc << " ";
+            // std::cout << "pc=" << Phnsw::pc << " ";
             if (*i.stage_now == i.stages) {
-                std::cout << "pipeline end";
+                // std::cout << "pipeline end";
                 size_t rd_size;
                 void *rd = Registers.find_match(i.rd, rd_size);
                 std::memcpy(rd, i.rd_temp, rd_size);
                 *i.stage_now = 0;
             } else if (*i.stage_now != 0) {
-                std::cout << "pipeline stage " << *i.stage_now;
+                // std::cout << "pipeline stage " << *i.stage_now;
                 *i.stage_now = *i.stage_now + 1;
             }
             std::cout << std::endl;
@@ -217,7 +217,7 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",     1},
     {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",     1},
-    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  1},
+    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  5},
     {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
     {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
 };
