@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-26 18:04:36
+ * @LastEditTime: 2025-02-26 21:59:32
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -86,15 +86,6 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
     size += "B";
     params.insert("scratchpad_size", size);
 
-    memory = loadUserSubComponent<SST::Interfaces::StandardMem>(
-                "memory",
-                SST::ComponentInfo::SHARE_NONE,
-                clockTC,
-                new SST::Interfaces::StandardMem::Handler<Phnsw>(this, &Phnsw::handleEvent)
-            );
-
-    sst_assert(memory, CALL_INFO, -1, "Unable to load scratchInterface subcomponent\n");
-
     // Initialize local variables
     Phnsw::timestamp = 0;
     Phnsw::num_events_issued = Phnsw::num_events_returned = 0;
@@ -126,7 +117,7 @@ Phnsw::~Phnsw() { }
  * @return {*}
  */
 void Phnsw::init(unsigned int phase) {
-    memory->init(phase);
+    // memory->init(phase);
     dma->init(phase);
 }
 

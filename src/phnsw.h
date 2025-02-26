@@ -160,7 +160,6 @@ private:
     uint64_t reqsToIssue;   // Number of requests to issue before ending simulation
 
     // Local variables
-    SST::Interfaces::StandardMem * memory;         // scratch interface
     std::unordered_map<uint64_t, SST::SimTime_t> requests; // Request queue (outstanding requests)
     SST::TimeConverter *clockTC;                 // Clock object
     SST::Clock::HandlerBase *clockHandler;       // Clock handler
