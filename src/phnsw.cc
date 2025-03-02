@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-02-26 21:59:32
+ * @LastEditTime: 2025-03-02 21:49:58
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -168,7 +168,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
                 // std::cout << "pipeline stage " << *i.stage_now;
                 *i.stage_now = *i.stage_now + 1;
             }
-            std::cout << std::endl;
+            // std::cout << std::endl;
         }
     }
 
@@ -208,7 +208,8 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",     1},
     {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",     1},
-    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  5},
+    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  1},
+    {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,   "cmp_res",  1},
     {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
     {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
 };
@@ -271,7 +272,7 @@ int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
     size_t src1_size, src2_size, rd_size;
     src1_ptr = (uint8_t *) Phnsw::Registers.find_match("num1", src1_size);
     src2_ptr = (uint8_t *) Phnsw::Registers.find_match("num2", src2_size);
-    rd_ptr = (uint8_t *) Phnsw::Registers.find_match("alu_res", rd_size);
+    // rd_ptr = (uint8_t *) Phnsw::Registers.find_match("alu_res", rd_size);
     rd_ptr = (uint8_t *) rd_temp_ptr;
     // std::cout << "pc=" << Phnsw::pc << " ";
     // std::cout << "before rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << "; ";
@@ -281,6 +282,40 @@ int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
     // std::cout << "rd: rd_temp; ";
     *rd_ptr = *src1_ptr + *src2_ptr;
     // std::cout << "after add rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
+    return 0;
+}
+
+int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
+    uint32_t src1, src2;
+    uint8_t src1_tmp, src2_tmp;
+    uint8_t *src1_ptr_8, *src2_ptr_8, *rd_ptr;
+    size_t src1_size, src2_size, rd_size;
+    std::string cmp_mode = inst_now[inst_count][1];
+    std::string src1_name = inst_now[inst_count][2];
+    std::string src2_name = inst_now[inst_count][3];
+
+    src1_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src1_name, src1_size);
+    src1_tmp = *src1_ptr_8;
+    src1 = (uint32_t) src1_tmp;
+    src2_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
+    src2_tmp = *src2_ptr_8;
+    src2 = (uint32_t) src2_tmp;
+    
+    rd_ptr = (uint8_t *) rd_temp_ptr;
+    if (cmp_mode == "EQ") {
+        *rd_ptr = (src1_tmp == src2_tmp);
+    } else if (cmp_mode == "NE") {
+        *rd_ptr = (src1_tmp != src2_tmp);
+    } else if (cmp_mode == "GT") {
+        *rd_ptr = (src1_tmp > src2_tmp);
+    } else if (cmp_mode == "LT") {
+        *rd_ptr = (src1_tmp < src2_tmp);
+    } else if (cmp_mode == "GE") {
+        *rd_ptr = (src1_tmp >= src2_tmp);
+    } else if (cmp_mode == "LE") {
+        *rd_ptr = (src1_tmp <= src2_tmp);
+    }
     return 0;
 }
 
