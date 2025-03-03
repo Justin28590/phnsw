@@ -202,6 +202,7 @@ public:
             asmop(asmop), description(description), handeler(handeler), rd(rd), stages(stages) {
                 stage_now = new uint32_t(0);
                 rd_temp = new char[Phnsw::Registers.find_size(rd)];
+                std::cout << "Create tmp reg " << rd << " size " << Phnsw::Registers.find_size(rd) << std::endl;
             }
     };
     static const std::vector<InstStruct> inst_struct;
