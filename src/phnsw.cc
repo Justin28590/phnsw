@@ -301,36 +301,45 @@ int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) { // TODO test this
     *stage_now = 1;
     uint32_t src1, src2;
-    uint8_t src1_tmp, src2_tmp;
-    uint8_t *src1_ptr_8, *src2_ptr_8, *rd_ptr;
+    uint32_t src1_tmp, src2_tmp;
+    void *src1_ptr_8, *src2_ptr_8;
+    uint8_t *rd_ptr;
     size_t src1_size, src2_size, rd_size;
     std::string cmp_mode = inst_now[inst_count][1];
     std::string src1_name = inst_now[inst_count][2];
     std::string src2_name = inst_now[inst_count][3];
 
-    src1_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src1_name, src1_size);
-    src1_tmp = *src1_ptr_8;
+    if (src1_name.back() == ']' && src1_name[0] == '[') { // is imm
+        src1_tmp = std::stoull(src1_name.substr(1, src1_name.size() - 2));
+    } else {
+        src1_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src1_name, src1_size);
+        std::memcpy(&src1_tmp, src1_ptr_8, src1_size);
+    }
     src1 = (uint32_t) src1_tmp;
-    src2_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
-    src2_tmp = *src2_ptr_8;
+    if (src2_name.back() == ']' && src2_name[0] == '[') { // is imm
+        src2_tmp = std::stoull(src2_name.substr(1, src2_name.size() - 2));
+    } else {
+        src2_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
+        std::memcpy(&src2_tmp, src2_ptr_8, src2_size);
+    }
     src2 = (uint32_t) src2_tmp;
 
     rd_ptr = (uint8_t *) rd_temp_ptr;
     if (cmp_mode == "EQ") {
-        *rd_ptr = (src1_tmp == src2_tmp);
+        *rd_ptr = (src1 == src2);
     } else if (cmp_mode == "NE") {
-        *rd_ptr = (src1_tmp != src2_tmp);
+        *rd_ptr = (src1 != src2);
     } else if (cmp_mode == "GT") {
-        *rd_ptr = (src1_tmp > src2_tmp);
+        *rd_ptr = (src1 > src2);
     } else if (cmp_mode == "LT") {
-        *rd_ptr = (src1_tmp < src2_tmp);
+        *rd_ptr = (src1 < src2);
     } else if (cmp_mode == "GE") {
-        *rd_ptr = (src1_tmp >= src2_tmp);
+        *rd_ptr = (src1 >= src2);
     } else if (cmp_mode == "LE") {
-        *rd_ptr = (src1_tmp <= src2_tmp);
+        *rd_ptr = (src1 <= src2);
     }
     return 0;
 }
