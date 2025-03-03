@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-03 14:33:32
+ * @LastEditTime: 2025-03-03 21:45:43
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -303,11 +303,11 @@ int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
 
 int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) { // TODO test this
     *stage_now = 1;
-    uint32_t src1, src2;
-    uint32_t src1_tmp, src2_tmp;
+    uint32_t src1=0, src2=0;
+    uint32_t src1_tmp=0, src2_tmp=0;
     void *src1_ptr_8, *src2_ptr_8;
     uint8_t *rd_ptr;
-    size_t src1_size, src2_size, rd_size;
+    size_t src1_size=0, src2_size=0, rd_size=0;
     std::string cmp_mode = inst_now[inst_count][1];
     std::string src1_name = inst_now[inst_count][2];
     std::string src2_name = inst_now[inst_count][3];
@@ -315,15 +315,15 @@ int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) { // TODO test this
     if (src1_name.back() == ']' && src1_name[0] == '[') { // is imm
         src1_tmp = std::stoull(src1_name.substr(1, src1_name.size() - 2));
     } else {
-        src1_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src1_name, src1_size);
+        src1_ptr_8 = Phnsw::Registers.find_match(src1_name, src1_size);
         std::memcpy(&src1_tmp, src1_ptr_8, src1_size);
     }
     src1 = (uint32_t) src1_tmp;
     if (src2_name.back() == ']' && src2_name[0] == '[') { // is imm
         src2_tmp = std::stoull(src2_name.substr(1, src2_name.size() - 2));
     } else {
-        src2_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
-        std::memcpy(&src2_tmp, src2_ptr_8, src2_size);
+        src2_ptr_8 = Phnsw::Registers.find_match(src2_name, src2_size);
+        std::memcpy((void *) &src2_tmp, src2_ptr_8, src2_size);
     }
     src2 = (uint32_t) src2_tmp;
 
