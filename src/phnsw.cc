@@ -311,7 +311,7 @@ int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) {
     src2_ptr_8 = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
     src2_tmp = *src2_ptr_8;
     src2 = (uint32_t) src2_tmp;
-    
+
     rd_ptr = (uint8_t *) rd_temp_ptr;
     if (cmp_mode == "EQ") {
         *rd_ptr = (src1_tmp == src2_tmp);
