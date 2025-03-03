@@ -59,11 +59,10 @@ struct Register {
         reg_map["raw_res"]           = new RegTemp<std::array<uint8_t, 128>>{"RAW", {0}};
         reg_map["addr"]              = new RegTemp<uint32_t>{"index2addr", 0};
         // Vars
-        reg_map["C_list"]            = new RegTemp<std::array<uint32_t, 10>>{"Candidate List", {0}};
-        reg_map["C_index"]           = new RegTemp<std::array<uint32_t, 10>>{"Candidate Index", {0}};
-        reg_map["C_list[10]"]            = new RegTemp<std::array<uint32_t, 10>>{"Candidate List", {0}};
-        reg_map["C_index[10]"]           = new RegTemp<std::array<uint32_t, 10>>{"Candidate Index", {0}};
         reg_map["C_dist"]            = new RegTemp<std::array<uint32_t, 10>>{"Candidate Dist", {0}};
+        reg_map["C_index"]           = new RegTemp<std::array<uint32_t, 10>>{"Candidate Index", {0}};
+        reg_map["C_dist[10]"]            = new RegTemp<std::array<uint32_t, 10>>{"Candidate List", {0}};
+        reg_map["C_index[10]"]           = new RegTemp<std::array<uint32_t, 10>>{"Candidate Index", {0}};
         reg_map["C_size"]            = new RegTemp<uint32_t>{"Candidate Size", 0};
         reg_map["W_index"]           = new RegTemp<std::array<uint32_t, 10>>{"Wait Index", {0}};
         reg_map["W_dist"]            = new RegTemp<std::array<uint32_t, 10>>{"Wait Dist", {0}};
