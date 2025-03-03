@@ -49,7 +49,7 @@ struct Register {
         reg_map["wrm_index"]   = new RegTemp<uint32_t>{"WRM", 0};
         reg_map["index2addr"]  = new RegTemp<uint32_t>{"index2addr", 0};
           // Destinations
-        reg_map["distance_res"]      = new RegTemp<uint32_t>{"DistCalc", 0};
+        reg_map["dist_res"]          = new RegTemp<uint32_t>{"DistCalc", 0};
         reg_map["look_res_index"]    = new RegTemp<uint32_t>{"LookUp", 0};
         reg_map["look_res_distance"] = new RegTemp<uint32_t>{"LookUp", 0};
         reg_map["cmp_res"]           = new RegTemp<uint8_t>{"CMP", 0};
@@ -84,7 +84,7 @@ struct Register {
         if (reg_map.find(name) == reg_map.end()) {
             throw "Register not found: ";
         }
-        size = *(uint64_t *) (reg_map[name]);
+        size = *(size_t *) (reg_map[name]);
         if (size == sizeof(std::array<uint8_t, 128>)) {
             return &((RegTemp<std::array<uint8_t, 128>> *) (reg_map[name]))->reg;
         } else if (size == sizeof(std::array<uint32_t, 10>)) {
@@ -104,7 +104,7 @@ struct Register {
             // throw "Register not found: ";
             return 0;
         }
-        return *(uint64_t *) (reg_map[name]);
+        return *(size_t *) (reg_map[name]);
     }
 };
 

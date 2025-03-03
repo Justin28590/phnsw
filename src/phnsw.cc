@@ -126,6 +126,15 @@ void Phnsw::init(unsigned int phase) {
  * @return {*}
  */
 void Phnsw::setup() {
+    size_t raw1_size, raw2_size;
+    std::array<uint8_t, 128> *raw1 = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw1", raw1_size);
+    std::array<uint8_t, 128> *raw2 = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw2", raw2_size);
+    for (auto &&i : *raw1) {
+        i = 0;
+    }
+    for (auto &&i : *raw2) {
+        i = 10;
+    }
     // output.verbose(CALL_INFO, 1, 0, "Component is being setup.\n");
 }
 
@@ -210,6 +219,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",     1},
     {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  1},
     {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,   "cmp_res",  1},
+    {"DIST",    "calc distance",            &Phnsw::inst_dist,  "dist_res", 1},
     {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
     {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
 };
@@ -316,6 +326,28 @@ int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) {
     } else if (cmp_mode == "LE") {
         *rd_ptr = (src1_tmp <= src2_tmp);
     }
+    return 0;
+}
+
+int Phnsw::inst_dist(void *rd_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
+    std::array<uint8_t,  128> *src1_ptr, *src2_ptr;
+    uint32_t *rd_ptr;
+    size_t src1_size, src2_size, rd_size;
+    src1_ptr = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw1", src1_size);
+    src2_ptr = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw2", src2_size);
+    rd_ptr = (uint32_t *) rd_temp_ptr;
+    *rd_ptr = 0;
+    for(size_t i=0; i<src1_ptr->size(); i++) {
+        *rd_ptr += ((*src1_ptr)[i] * (*src1_ptr)[i] >> 1)
+                 - (*src2_ptr)[i] * (*src1_ptr)[i]
+                 + ((*src2_ptr)[i] * (*src2_ptr)[i] >> 1);
+    }
+    std::cout << "pc=" << Phnsw::pc << " ";
+    std::cout << "inst: " << "DIST" << "; ";
+    std::cout << "raw1[0]" << (uint32_t) (*src1_ptr)[0] << "; ";
+    std::cout << "raw2[0]" << (uint32_t) (*src2_ptr)[0] << "; ";
+    std::cout << "Value " << *rd_ptr << std::endl;
     return 0;
 }
 

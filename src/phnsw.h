@@ -211,6 +211,7 @@ public:
     int inst_mov(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_add(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_cmp(void *rd_temp_ptr, uint32_t *stage_now);
+    int inst_dist(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_info(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_dummy(void *rd_temp_ptr, uint32_t *stage_now);
 };
