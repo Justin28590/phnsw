@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-02 21:49:58
+ * @LastEditTime: 2025-03-03 13:05:38
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -223,8 +223,6 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
     {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
 };
-
-const size_t Phnsw::inst_struct_size = sizeof(Phnsw::inst_struct) / sizeof(Phnsw::InstStruct);
 
 int Phnsw::inst_end(void *rd_temp_ptr, uint32_t *stage_now) {
     std::cout << "pc=" << Phnsw::pc << " " << "inst: " << "END" << std::endl;

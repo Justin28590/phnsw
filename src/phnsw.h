@@ -206,7 +206,6 @@ public:
             }
     };
     static const std::vector<InstStruct> inst_struct;
-    static const size_t inst_struct_size;
     // module functions
     int inst_end(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_mov(void *rd_temp_ptr, uint32_t *stage_now);
