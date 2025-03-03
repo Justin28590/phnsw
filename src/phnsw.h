@@ -58,6 +58,7 @@
 
 #include <unordered_map>
 #include <bitset>
+#include <algorithm>
 
 // Include file for the SubComponent API we'll use
 #include "phnswDMA.h"
@@ -212,6 +213,8 @@ public:
     int inst_add(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_cmp(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_dist(void *rd_temp_ptr, uint32_t *stage_now);
+    int inst_look(void *rd_temp_ptr, uint32_t *stage_now);
+    int inst_push(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_info(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_dummy(void *rd_temp_ptr, uint32_t *stage_now);
 };

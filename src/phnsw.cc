@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-03 13:05:38
+ * @LastEditTime: 2025-03-03 14:33:32
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -126,14 +126,21 @@ void Phnsw::init(unsigned int phase) {
  * @return {*}
  */
 void Phnsw::setup() {
-    size_t raw1_size, raw2_size;
-    std::array<uint8_t, 128> *raw1 = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw1", raw1_size);
-    std::array<uint8_t, 128> *raw2 = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw2", raw2_size);
-    for (auto &&i : *raw1) {
-        i = 0;
-    }
-    for (auto &&i : *raw2) {
-        i = 10;
+    // size_t raw1_size, raw2_size;
+    // std::array<uint8_t, 128> *raw1 = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw1", raw1_size);
+    // std::array<uint8_t, 128> *raw2 = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw2", raw2_size);
+    // for (auto &&i : *raw1) {
+    //     i = 0;
+    // }
+    // for (auto &&i : *raw2) {
+    //     i = 10;
+    // }
+    size_t list_size, list_index_size;
+    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list", list_size);
+    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list_index", list_index_size);
+    for (size_t i=0; i<10; i++) {
+        (*list)[i] = i*10;
+        (*list_index)[i] = i;
     }
     // output.verbose(CALL_INFO, 1, 0, "Component is being setup.\n");
 }
@@ -215,13 +222,14 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 }
 
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
-    {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",     1},
-    {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",     1},
-    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",  1},
-    {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,   "cmp_res",  1},
-    {"DIST",    "calc distance",            &Phnsw::inst_dist,  "dist_res", 1},
-    {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",     1},
-    {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",     1}
+    {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",             1},
+    {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",             1},
+    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",          1},
+    {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,   "cmp_res",          1},
+    {"DIST",    "calc distance",            &Phnsw::inst_dist,  "dist_res",         1},
+    {"LOOK",    "look up",                  &Phnsw::inst_look,  "look_res_index",   1},
+    {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",             1},
+    {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",             1}
 };
 
 int Phnsw::inst_end(void *rd_temp_ptr, uint32_t *stage_now) {
@@ -346,6 +354,28 @@ int Phnsw::inst_dist(void *rd_temp_ptr, uint32_t *stage_now) {
     std::cout << "raw1[0]" << (uint32_t) (*src1_ptr)[0] << "; ";
     std::cout << "raw2[0]" << (uint32_t) (*src2_ptr)[0] << "; ";
     std::cout << "Value " << *rd_ptr << std::endl;
+    return 0;
+}
+
+int Phnsw::inst_look(void *rd_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
+    size_t list_size, list_index_size;
+    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list", list_size);
+    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list_index", list_index_size);
+    uint32_t *rd_index_ptr = (uint32_t *) rd_temp_ptr;
+    size_t rd_dist_size;
+    uint32_t *rd_dist_ptr = (uint32_t *) Phnsw::Registers.find_match("look_res_dist", rd_dist_size);
+    uint32_t res_index;
+    if (inst_now[inst_count][1] == "MAX") {
+        *rd_dist_ptr = *max_element(list->begin(), list->end());
+        res_index = (*list_index)[std::distance(list->begin(), max_element(list->begin(), list->end()))];
+    } else if (inst_now[inst_count][1] == "MIN") {
+        *rd_dist_ptr = *min_element(list->begin(), list->end());
+        res_index = (*list_index)[std::distance(list->begin(), min_element(list->begin(), list->end()))];
+    } else {
+        output.fatal(CALL_INFO, -1, "ERROR: look mode not found");
+    }
+    *rd_index_ptr = res_index;
     return 0;
 }
 
