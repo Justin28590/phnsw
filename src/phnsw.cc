@@ -286,19 +286,38 @@ int Phnsw::inst_mov(void *rd_temp_ptr, uint32_t *stage_now) {
 int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
     uint8_t *src1_ptr, *src2_ptr, *rd_ptr;
+    uint8_t imm1, imm2;
     size_t src1_size, src2_size, rd_size;
-    src1_ptr = (uint8_t *) Phnsw::Registers.find_match("num1", src1_size);
-    src2_ptr = (uint8_t *) Phnsw::Registers.find_match("num2", src2_size);
+    std::string src1_name = inst_now[inst_count][1];
+    std::string src2_name = inst_now[inst_count][2];
+    // std::cout << "pc=" << Phnsw::pc << " "
+    // << "inst: " << "ADD" << "; "
+    // << "reg1: " << src1_name << "; "
+    // << "reg2: " << src2_name << "; "
+    // << "rd: " << "alu_res" << "; " << std::endl;
+    if (src1_name.back() == ']' && src1_name[0] == '[') {
+        imm1 = std::stoull(src1_name.substr(1, src1_name.size() - 2));
+        src1_ptr = &imm1; src1_size = sizeof(imm1);
+    } else {
+        src1_ptr = (uint8_t *) Phnsw::Registers.find_match(src1_name, src1_size);
+    }
+    if (src2_name.back() == ']' && src2_name[0] == '[') {
+        imm2 = std::stoull(src2_name.substr(1, src2_name.size() - 2));
+        src2_ptr = &imm1; src2_size = sizeof(imm2);
+    } else {
+        src2_ptr = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
+    }
+
     // rd_ptr = (uint8_t *) Phnsw::Registers.find_match("alu_res", rd_size);
     rd_ptr = (uint8_t *) rd_temp_ptr;
-    // std::cout << "pc=" << Phnsw::pc << " ";
+    std::cout << "pc=" << Phnsw::pc << " ";
     // std::cout << "before rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << "; ";
-    // std::cout << "inst: " << "ADD ";
-    // std::cout << "reg1: num1; ";
-    // std::cout << "reg2: num2; ";
-    // std::cout << "rd: rd_temp; ";
+    std::cout << "inst: " << "ADD ";
+    std::cout << "reg1: num1=" << (uint32_t) *src1_ptr << "; ";
+    std::cout << "reg2: num2=" << (uint32_t) *src2_ptr << "; ";
+    std::cout << "rd: rd_temp; ";
     *rd_ptr = *src1_ptr + *src2_ptr;
-    // std::cout << "after add rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << std::endl;
+    std::cout << "after add rd=" << /* std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) */ (uint32_t) *rd_ptr << std::endl;
     return 0;
 }
 
