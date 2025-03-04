@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-03 22:53:11
+ * @LastEditTime: 2025-03-04 12:38:51
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -151,7 +151,14 @@ void Phnsw::setup() {
  * @return {*}
  */
 void Phnsw::complete(unsigned int phase) {
-    // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
+    size_t C_dist_size, C_index_size;
+    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist[10]", C_dist_size);
+    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index[10]", C_index_size);
+    for (size_t i=0; i<10; i++) {
+        std::cout << "C_dist[10][" << i << "]=" << (*list)[i] << "; ";
+        std::cout << "C_index[10][" << i << "]=" << (*list_index)[i] << std::endl;
+        // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
+    }
 }
 
 /**
