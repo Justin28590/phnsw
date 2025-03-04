@@ -421,40 +421,39 @@ int Phnsw::inst_push(void *rd_temp_ptr, uint32_t *stage_now) {
     std::string src_dist_name = inst_now[inst_count][1];
     std::string src_index_name = inst_now[inst_count][2];
     std::string rd = inst_now[inst_count][3];
-    void *src_dist_ptr = Phnsw::Registers.find_match(src_dist_name, src_size);
-    void *src_index_ptr = Phnsw::Registers.find_match(src_index_name, src_size);
+    void *src_dist_ptr;
+    try {
+        src_dist_ptr = Phnsw::Registers.find_match(src_dist_name, src_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_dist_name.c_str());
+    }
+    void *src_index_ptr;
+    try {
+        src_index_ptr = Phnsw::Registers.find_match(src_index_name, src_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, src_index_name.c_str());
+    }
     size_t X_size_size;
-    uint32_t *X_size = (uint32_t *) Phnsw::Registers.find_match(rd + "_size", X_size_size);
+    uint32_t *X_size;
+    try {
+        X_size = (uint32_t *) Phnsw::Registers.find_match(rd + "_size", X_size_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd.c_str());
+    }
     // std::cout << "pc=" << Phnsw::pc << " "
-    // << "X_size= " << rd << "_size"
+    // << "X_size=" << rd << "_size"
     // << "=" << *X_size
-    // << " length=" << X_size_size << std::endl;
+    // << " X_size->length=" << X_size_size << std::endl;
     std::array<uint32_t, 10> *X_dist, *X_index;
     uint32_t offset = 0;
-    if (*X_size < 10) {
-        offset = *X_size;
-        X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist", src_size);
-        X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index", src_size);
-    } else if (10 <= *X_size && *X_size < 20) {
-        offset = *X_size - 10;
-        X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist[10]", src_size);
-        X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index[10]", src_size);
-    } else if (20 <= *X_size && *X_size < 30) {
-        offset = *X_size - 20;
-        X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist[20]", src_size);
-        X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index[20]", src_size);
-    } else if (30 <= *X_size && *X_size < 40) {
-        offset = *X_size - 30;
-        X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist[30]", src_size);
-        X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index[30]", src_size);
-    } else if (40 <= *X_size && *X_size < 50 && rd == "C") { // only C has 50 index
-        offset = *X_size - 40;
-        X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist[40]", src_size);
-        X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index[40]", src_size);
-    } else if (50 <= *X_size && *X_size < 60 && rd == "C") { // only C has 60 index
-        offset = *X_size - 50;
-        X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist[50]", src_size);
-        X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index[50]", src_size);
+    if (*X_size < 60) {
+        offset = *X_size + 1;
+        try {
+            X_dist = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_dist", src_size);
+            X_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match(rd + "_index", src_size);
+        } catch (char *e) {
+            output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd.c_str());
+        }
     } else {
         output.fatal(CALL_INFO, -1, "ERROR: %s_size too large", rd.c_str());
     }
