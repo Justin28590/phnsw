@@ -26,5 +26,5 @@ install:
 	sst-register SST_ELEMENT_SOURCE $(NAME)=$(CURDIR)
 	sst-register SST_ELEMENT_TESTS  $(NAME)=$(CURDIR)/../tests
 
-clean:
+clean: 
 	rm -f *.o lib$(NAME).so
