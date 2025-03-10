@@ -49,23 +49,21 @@ struct Register {
         reg_map["wrm_index"]   = new RegTemp<uint32_t>{"WRM", 0};
         reg_map["index2addr"]  = new RegTemp<uint32_t>{"index2addr", 0};
           // Destinations
-        reg_map["dist_res"]          = new RegTemp<uint32_t>{"DistCalc", 0};
-        reg_map["look_res_index"]    = new RegTemp<uint32_t>{"LookUp", 0};
-        reg_map["look_res_dist"] = new RegTemp<uint32_t>{"LookUp", 0};
-        reg_map["cmp_res"]           = new RegTemp<uint8_t>{"CMP", 0};
-        reg_map["dma_res"]           = new RegTemp<uint64_t>{"DMA", 0};
-        reg_map["alu_res"]           = new RegTemp<uint8_t>{"ALU", 0};
-        reg_map["visit_res"]         = new RegTemp<uint8_t>{"VISIT", 0};
-        reg_map["raw_res"]           = new RegTemp<std::array<uint8_t, 128>>{"RAW", {0}};
-        reg_map["addr"]              = new RegTemp<uint32_t>{"index2addr", 0};
+        reg_map["dist_res"]       = new RegTemp<uint32_t>{"DistCalc", 0};
+        reg_map["look_res_index"] = new RegTemp<uint32_t>{"LookUp", 0};
+        reg_map["look_res_dist"]  = new RegTemp<uint32_t>{"LookUp", 0};
+        reg_map["cmp_res"]        = new RegTemp<uint8_t>{"CMP", 0};
+        reg_map["dma_res"]        = new RegTemp<uint64_t>{"DMA", 0};
+        reg_map["alu_res"]        = new RegTemp<uint8_t>{"ALU", 0};
+        reg_map["visit_res"]      = new RegTemp<uint8_t>{"VISIT", 0};
+        reg_map["raw_res"]        = new RegTemp<std::array<uint8_t, 128>>{"RAW", {0}};
+        reg_map["addr"]           = new RegTemp<uint32_t>{"index2addr", 0};
         // Vars
-        reg_map["C_dist"]            = new RegTemp<std::array<uint32_t, 10>>{"Candidate Dist", {0}};
-        reg_map["C_index"]           = new RegTemp<std::array<uint32_t, 10>>{"Candidate Index", {0}};
-        reg_map["C_dist[10]"]        = new RegTemp<std::array<uint32_t, 10>>{"Candidate List", {0}};
-        reg_map["C_index[10]"]       = new RegTemp<std::array<uint32_t, 10>>{"Candidate Index", {0}};
+        reg_map["C_dist"]            = new RegTemp<std::array<uint32_t, 60>>{"Candidate Dist", {0}};
+        reg_map["C_index"]           = new RegTemp<std::array<uint32_t, 60>>{"Candidate Index", {0}};
         reg_map["C_size"]            = new RegTemp<uint32_t>{"Candidate Size", 0};
-        reg_map["W_index"]           = new RegTemp<std::array<uint32_t, 10>>{"Wait Index", {0}};
-        reg_map["W_dist"]            = new RegTemp<std::array<uint32_t, 10>>{"Wait Dist", {0}};
+        reg_map["W_index"]           = new RegTemp<std::array<uint32_t, 40>>{"Wait Index", {0}};
+        reg_map["W_dist"]            = new RegTemp<std::array<uint32_t, 40>>{"Wait Dist", {0}};
         reg_map["W_size"]            = new RegTemp<uint32_t>{"Wait Size", 0};
         reg_map["lowB_index"]        = new RegTemp<uint32_t>{"lower bound index", 0};
         reg_map["lowB_dist"]         = new RegTemp<uint32_t>{"lower bound dist", 0};
@@ -91,6 +89,10 @@ struct Register {
             return &((RegTemp<std::array<uint8_t, 128>> *) (reg_map[name]))->reg;
         } else if (size == sizeof(std::array<uint32_t, 10>)) {
             return &((RegTemp<std::array<uint32_t, 10>> *) (reg_map[name]))->reg;
+        } else if (size == sizeof(std::array<uint32_t, 40>)) { // W
+            return &((RegTemp<std::array<uint32_t, 40>> *) (reg_map[name]))->reg;
+        } else if (size == sizeof(std::array<uint32_t, 60>)) { // C
+            return &((RegTemp<std::array<uint32_t, 60>> *) (reg_map[name]))->reg;
         } else if (size == sizeof(uint8_t)) {
             return &((RegTemp<uint8_t> *) (reg_map[name]))->reg;
         } else if (size == sizeof(uint32_t)) {
