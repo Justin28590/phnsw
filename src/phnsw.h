@@ -57,6 +57,7 @@
 #include <sst/core/rng/marsaglia.h>
 
 #include <unordered_map>
+#include <variant>
 #include <bitset>
 #include <algorithm>
 
@@ -215,6 +216,7 @@ public:
     int inst_dist(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_look(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_push(void *rd_temp_ptr, uint32_t *stage_now);
+    int inst_rmc_dist(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_info(void *rd_temp_ptr, uint32_t *stage_now);
     int inst_dummy(void *rd_temp_ptr, uint32_t *stage_now);
 };

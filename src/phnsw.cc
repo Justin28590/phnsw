@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-04 12:38:51
+ * @LastEditTime: 2025-03-04 22:08:50
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -152,13 +152,19 @@ void Phnsw::setup() {
  */
 void Phnsw::complete(unsigned int phase) {
     size_t C_dist_size, C_index_size;
-    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist[10]", C_dist_size);
-    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index[10]", C_index_size);
-    for (size_t i=0; i<10; i++) {
-        std::cout << "C_dist[10][" << i << "]=" << (*list)[i] << "; ";
-        std::cout << "C_index[10][" << i << "]=" << (*list_index)[i] << std::endl;
-        // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
+    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist", C_dist_size);
+    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index", C_index_size);
+    for (size_t i=0; i<60; i++) {
+        std::cout << "C_dist[" << i << "]=" << (*list)[i] << "; ";
+        std::cout << "C_index[" << i << "]=" << (*list_index)[i] << std::endl;
     }
+    // list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist[10]", C_dist_size);
+    // list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index[10]", C_index_size);
+    // for (size_t i=0; i<10; i++) {
+    //     std::cout << "C_dist[10][" << i << "]=" << (*list)[i] << "; ";
+    //     std::cout << "C_index[10][" << i << "]=" << (*list_index)[i] << std::endl;
+    // }
+    // output.verbose(CALL_INFO, 1, 0, "Component is participating in phase %d of complete.\n", phase);
 }
 
 /**
@@ -229,15 +235,16 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 }
 
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
-    {"END",     "end the simulation",       &Phnsw::inst_end,   "nord",             1},
-    {"MOV",     "move data between regs",   &Phnsw::inst_mov,   "nord",             1},
-    {"ADD",     "add two numbers",          &Phnsw::inst_add,   "alu_res",          1},
-    {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,   "cmp_res",          1},
-    {"DIST",    "calc distance",            &Phnsw::inst_dist,  "dist_res",         1},
-    {"LOOK",    "look up",                  &Phnsw::inst_look,  "look_res_index",   1},
-    {"PUSH",    "push element to list",     &Phnsw::inst_push,  "nord",             1},
-    {"INFO",    "print reg info" ,          &Phnsw::inst_info,  "nord",             1},
-    {"dummy",   "dummy inst",               &Phnsw::inst_dummy, "nord",             1}
+    {"END",     "end the simulation",       &Phnsw::inst_end,       "nord",             1},
+    {"MOV",     "move data between regs",   &Phnsw::inst_mov,       "nord",             1},
+    {"ADD",     "add two numbers",          &Phnsw::inst_add,       "alu_res",          1},
+    {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,       "cmp_res",          1},
+    {"DIST",    "calc distance",            &Phnsw::inst_dist,      "dist_res",         1},
+    {"LOOK",    "look up",                  &Phnsw::inst_look,      "look_res_index",   1},
+    {"PUSH",    "push element to list",     &Phnsw::inst_push,      "nord",             1},
+    {"RMC",     "remove element from W",    &Phnsw::inst_rmc_dist,  "C_dist",           8},
+    {"INFO",    "print reg info" ,          &Phnsw::inst_info,      "nord",             1},
+    {"dummy",   "dummy inst",               &Phnsw::inst_dummy,     "nord",             1}
 };
 
 int Phnsw::inst_end(void *rd_temp_ptr, uint32_t *stage_now) {
@@ -462,6 +469,46 @@ int Phnsw::inst_push(void *rd_temp_ptr, uint32_t *stage_now) {
     *X_size = *X_size + 1;
         // std::cout << "pc=" << Phnsw::pc << " "
         // << "after X_size=" << *X_size << std::endl;
+    return 0;
+}
+
+int Phnsw::inst_rmc_dist(void *rd_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
+    size_t X_dist_size, X_index_size, idx_size, rd_size;
+    std::array<uint32_t, 60> *X_dist_ptr, *X_index_ptr, *rd_ptr;
+    std::string idx = inst_now[inst_count][1];
+    uint32_t index_to_rm;
+    try {
+        index_to_rm = *(uint32_t *) Phnsw::Registers.find_match(idx, idx_size);
+        if (idx_size != sizeof(uint32_t)) {
+            output.fatal(CALL_INFO, -1, "ERROR: %s size not match!", idx.c_str());
+        }
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, idx.c_str());
+    }
+    std::cout << "index to rm=" << index_to_rm << std::endl;
+    try {
+        X_dist_ptr = (std::array<uint32_t, 60> *) Phnsw::Registers.find_match("C_dist", X_dist_size);
+        X_index_ptr = (std::array<uint32_t, 60> *) Phnsw::Registers.find_match("C_index", X_index_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "C_index");
+    }
+    // std::cout << "dist and index founded" << std::endl;
+    rd_ptr = (std::array<uint32_t, 60> *) rd_temp_ptr;
+    *rd_ptr = *X_dist_ptr;
+    std::cout << "rd created" << std::endl;
+    size_t loops = 60, target_addr = 60;
+    for (size_t i=0; i<loops; i++) {
+        if ((*X_index_ptr)[i] == index_to_rm) {
+            (*rd_ptr)[i] = 0;
+            target_addr = i;
+            break;
+        }
+    }
+    for(size_t i=target_addr; i<loops-1; i++) { // shift left
+        (*rd_ptr)[i] = (*rd_ptr)[i+1];
+    }
+    (*rd_ptr)[loops - 1] = 0;
     return 0;
 }
 
