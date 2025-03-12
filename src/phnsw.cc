@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-04 22:08:50
+ * @LastEditTime: 2025-03-12 22:15:58
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -305,11 +305,6 @@ int Phnsw::inst_add(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     size_t src1_size, src2_size, rd_size;
     std::string src1_name = inst_now[inst_count][1];
     std::string src2_name = inst_now[inst_count][2];
-    // std::cout << "pc=" << Phnsw::pc << " "
-    // << "inst: " << "ADD" << "; "
-    // << "reg1: " << src1_name << "; "
-    // << "reg2: " << src2_name << "; "
-    // << "rd: " << "alu_res" << "; " << std::endl;
     if (src1_name.back() == ']' && src1_name[0] == '[') {
         imm1 = std::stoull(src1_name.substr(1, src1_name.size() - 2));
         src1_ptr = &imm1; src1_size = sizeof(imm1);
@@ -323,16 +318,8 @@ int Phnsw::inst_add(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         src2_ptr = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
     }
 
-    // rd_ptr = (uint8_t *) Phnsw::Registers.find_match("alu_res", rd_size);
     rd_ptr = (uint8_t *) rd_temp_ptr;
-    std::cout << "pc=" << Phnsw::pc << " ";
-    // std::cout << "before rd=" << std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) << "; ";
-    std::cout << "inst: " << "ADD ";
-    std::cout << "reg1: num1=" << (uint32_t) *src1_ptr << "; ";
-    std::cout << "reg2: num2=" << (uint32_t) *src2_ptr << "; ";
-    std::cout << "rd: rd_temp; ";
     *rd_ptr = *src1_ptr + *src2_ptr;
-    std::cout << "after add rd=" << /* std::bitset<sizeof(uint8_t) * 8>(*(uint8_t *) rd_ptr) */ (uint32_t) *rd_ptr << std::endl;
     return 0;
 }
 
@@ -448,10 +435,6 @@ int Phnsw::inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     } catch (char *e) {
         output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd.c_str());
     }
-    // std::cout << "pc=" << Phnsw::pc << " "
-    // << "X_size=" << rd << "_size"
-    // << "=" << *X_size
-    // << " X_size->length=" << X_size_size << std::endl;
     std::array<uint32_t, 10> *X_dist, *X_index;
     uint32_t offset = 0;
     if (*X_size < 60) {
@@ -468,8 +451,6 @@ int Phnsw::inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     (*X_dist)[offset] = *((uint32_t *) src_dist_ptr);
     (*X_index)[offset] = *((uint32_t *) src_index_ptr);
     *X_size = *X_size + 1;
-        // std::cout << "pc=" << Phnsw::pc << " "
-        // << "after X_size=" << *X_size << std::endl;
     return 0;
 }
 
