@@ -194,31 +194,35 @@ public:
     struct InstStruct {
         std::string asmop;
         std::string description;
-        int (Phnsw::*handeler) (void *rd_temp_ptr, uint32_t *stage_now);
+        int (Phnsw::*handeler) (void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
         std::string rd;
+        std::string rd2;
         void *rd_temp;
+        void *rd2_temp;
         uint32_t stages;
         uint32_t *stage_now;
 
-        InstStruct(std::string asmop, std::string description, int (Phnsw::*handeler) (void *rd_temp_ptr, uint32_t *stage_now), std::string rd, uint32_t stages) :
-            asmop(asmop), description(description), handeler(handeler), rd(rd), stages(stages) {
+        InstStruct(std::string asmop, std::string description, int (Phnsw::*handeler) (void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now), std::string rd, std::string rd2, uint32_t stages) :
+            asmop(asmop), description(description), handeler(handeler), rd(rd), rd2(rd2), stages(stages) {
                 stage_now = new uint32_t(0);
                 rd_temp = new char[Phnsw::Registers.find_size(rd)];
-                std::cout << "Create tmp reg " << rd << " size " << Phnsw::Registers.find_size(rd) << std::endl;
+                rd2_temp = new char[Phnsw::Registers.find_size(rd2)];
+                std::cout << "Create tmp reg " << rd << " size " << Phnsw::Registers.find_size(rd);
+                std::cout << " Create tmp reg2 " << rd2 << " size " << Phnsw::Registers.find_size(rd2) << std::endl;
             }
     };
     static const std::vector<InstStruct> inst_struct;
     // module functions
-    int inst_end(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_mov(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_add(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_cmp(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_dist(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_look(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_push(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_rmc_dist(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_info(void *rd_temp_ptr, uint32_t *stage_now);
-    int inst_dummy(void *rd_temp_ptr, uint32_t *stage_now);
+    int inst_end(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_mov(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_add(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_cmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_dist(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_look(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_rmc(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
 };
 
 } } // namespace phnsw

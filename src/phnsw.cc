@@ -185,28 +185,30 @@ void Phnsw::finish() {
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
     for (auto &i : inst_struct) {
-        if (i.rd != "nord") {
-            // std::cout << "pc=" << Phnsw::pc << " ";
-            if (*i.stage_now == i.stages) {
-                // std::cout << "pipeline end";
+        if (*i.stage_now == i.stages) {
+            *i.stage_now = 0;
+            if (i.rd != "nord") {
                 size_t rd_size;
                 void *rd = Registers.find_match(i.rd, rd_size);
                 std::memcpy(rd, i.rd_temp, rd_size);
-                *i.stage_now = 0;
-            } else if (*i.stage_now != 0) {
-                // std::cout << "pipeline stage " << *i.stage_now;
-                *i.stage_now = *i.stage_now + 1;
             }
-            // std::cout << std::endl;
+            if (i.rd2 != "nord") {
+                size_t rd2_size;
+                void *rd2 = Registers.find_match(i.rd2, rd2_size);
+                std::memcpy(rd2, i.rd2_temp, rd2_size);
+            }
+        } else {
+            (*i.stage_now) ++;
         }
     }
+
 
     Phnsw::inst_count = 0;
     inst_now = Phnsw::img[pc];
     for (auto &inst : inst_now) {
         for(auto &&i : inst_struct) {
             if (inst[0].compare(i.asmop) == 0) {
-                (this->*(i.handeler))(i.rd_temp, i.stage_now); // Exe instruction function
+                (this->*(i.handeler))(i.rd_temp, i.rd2_temp, i.stage_now); // Exe instruction function
             }
         }
         inst_count ++;
@@ -235,25 +237,24 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 }
 
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
-    {"END",     "end the simulation",       &Phnsw::inst_end,       "nord",             1},
-    {"MOV",     "move data between regs",   &Phnsw::inst_mov,       "nord",             1},
-    {"ADD",     "add two numbers",          &Phnsw::inst_add,       "alu_res",          1},
-    {"CMP",     "cmp two numbers",          &Phnsw::inst_cmp,       "cmp_res",          1},
-    {"DIST",    "calc distance",            &Phnsw::inst_dist,      "dist_res",         1},
-    {"LOOK",    "look up",                  &Phnsw::inst_look,      "look_res_index",   1},
-    {"PUSH",    "push element to list",     &Phnsw::inst_push,      "nord",             1},
-    {"RMC",     "remove element from W",    &Phnsw::inst_rmc_dist,  "C_dist",           8},
-    {"INFO",    "print reg info" ,          &Phnsw::inst_info,      "nord",             1},
-    {"dummy",   "dummy inst",               &Phnsw::inst_dummy,     "nord",             1}
-};
+    {"END", "end the simulation", &Phnsw::inst_end, "nord", "nord", 1},
+    {"MOV", "move data between regs", &Phnsw::inst_mov, "nord", "nord", 1},
+    {"ADD", "add two numbers", &Phnsw::inst_add, "alu_res", "nord", 1},
+    {"CMP", "cmp two numbers", &Phnsw::inst_cmp, "cmp_res", "nord", 1},
+    {"DIST", "calc distance", &Phnsw::inst_dist, "dist_res", "nord", 1},
+    {"LOOK", "look up", &Phnsw::inst_look, "look_res_index", "nord", 1},
+    {"PUSH", "push element to list", &Phnsw::inst_push, "nord", "nord", 1},
+    {"RMC", "remove element from W", &Phnsw::inst_rmc, "C_dist", "C_index", 8},
+    {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
+    {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
-int Phnsw::inst_end(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_end(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     std::cout << "pc=" << Phnsw::pc << " " << "inst: " << "END" << std::endl;
     primaryComponentOKToEndSim();
     return 0;
 }
 
-int Phnsw::inst_mov(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_mov(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     uint64_t imm;
     std::string src_name = inst_now[inst_count][1];
     std::string rd_name = inst_now[inst_count][2];
@@ -297,7 +298,7 @@ int Phnsw::inst_mov(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_add(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
     uint8_t *src1_ptr, *src2_ptr, *rd_ptr;
     uint8_t imm1, imm2;
@@ -335,7 +336,7 @@ int Phnsw::inst_add(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) { // TODO test this
+int Phnsw::inst_cmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) { // TODO test this
     *stage_now = 1;
     uint32_t src1=0, src2=0;
     uint32_t src1_tmp=0, src2_tmp=0;
@@ -378,7 +379,7 @@ int Phnsw::inst_cmp(void *rd_temp_ptr, uint32_t *stage_now) { // TODO test this
     return 0;
 }
 
-int Phnsw::inst_dist(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_dist(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
     std::array<uint8_t,  128> *src1_ptr, *src2_ptr;
     uint32_t *rd_ptr;
@@ -400,7 +401,7 @@ int Phnsw::inst_dist(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_look(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_look(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
     size_t list_size, list_index_size;
     std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list", list_size);
@@ -422,7 +423,7 @@ int Phnsw::inst_look(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_push(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
     size_t src_size;
     std::string src_dist_name = inst_now[inst_count][1];
@@ -472,10 +473,10 @@ int Phnsw::inst_push(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_rmc_dist(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_rmc(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
-    size_t X_dist_size, X_index_size, idx_size, rd_size;
-    std::array<uint32_t, 60> *X_dist_ptr, *X_index_ptr, *rd_ptr;
+    size_t X_dist_size, X_index_size, idx_size, rd_size, rd2_size;
+    std::array<uint32_t, 60> *X_dist_ptr, *X_index_ptr, *rd_ptr, *rd2_ptr;
     std::string idx = inst_now[inst_count][1];
     uint32_t index_to_rm;
     try {
@@ -495,24 +496,29 @@ int Phnsw::inst_rmc_dist(void *rd_temp_ptr, uint32_t *stage_now) {
     }
     // std::cout << "dist and index founded" << std::endl;
     rd_ptr = (std::array<uint32_t, 60> *) rd_temp_ptr;
+    rd2_ptr = (std::array<uint32_t, 60> *) rd2_temp_ptr;
     *rd_ptr = *X_dist_ptr;
+    *rd2_ptr = *X_index_ptr;
     std::cout << "rd created" << std::endl;
     size_t loops = 60, target_addr = 60;
     for (size_t i=0; i<loops; i++) {
         if ((*X_index_ptr)[i] == index_to_rm) {
             (*rd_ptr)[i] = 0;
+            (*rd2_ptr)[i] = 0;
             target_addr = i;
             break;
         }
     }
     for(size_t i=target_addr; i<loops-1; i++) { // shift left
         (*rd_ptr)[i] = (*rd_ptr)[i+1];
+        (*rd2_ptr)[i] = (*rd2_ptr)[i+1];
     }
     (*rd_ptr)[loops - 1] = 0;
+    (*rd2_ptr)[loops - 1] = 0;
     return 0;
 }
 
-int Phnsw::inst_info(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     size_t rd_size;
     uint64_t tmp_value;
     void *rd_ptr = Phnsw::Registers.find_match(inst_now[inst_count][1], rd_size);
@@ -536,7 +542,7 @@ int Phnsw::inst_info(void *rd_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
-int Phnsw::inst_dummy(void *rd_temp_ptr, uint32_t *stage_now) {
+int Phnsw::inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     return 0;
 }
 
