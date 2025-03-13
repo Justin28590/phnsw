@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-12 22:15:58
+ * @LastEditTime: 2025-03-13 16:46:07
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -152,11 +152,11 @@ void Phnsw::setup() {
  */
 void Phnsw::complete(unsigned int phase) {
     size_t C_dist_size, C_index_size;
-    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist", C_dist_size);
-    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index", C_index_size);
-    for (size_t i=0; i<60; i++) {
-        std::cout << "C_dist[" << i << "]=" << (*list)[i] << "; ";
-        std::cout << "C_index[" << i << "]=" << (*list_index)[i] << std::endl;
+    std::array<uint32_t, 40> *list = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", C_dist_size);
+    std::array<uint32_t, 40> *list_index = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_index", C_index_size);
+    for (size_t i=0; i<40; i++) {
+        std::cout << "W_dist[" << i << "]=" << (*list)[i] << "; ";
+        std::cout << "W_index[" << i << "]=" << (*list_index)[i] << std::endl;
     }
     // list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist[10]", C_dist_size);
     // list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index[10]", C_index_size);
@@ -202,7 +202,6 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
         }
     }
 
-
     Phnsw::inst_count = 0;
     inst_now = Phnsw::img[pc];
     for (auto &inst : inst_now) {
@@ -244,7 +243,8 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"DIST", "calc distance", &Phnsw::inst_dist, "dist_res", "nord", 1},
     {"LOOK", "look up", &Phnsw::inst_look, "look_res_index", "nord", 1},
     {"PUSH", "push element to list", &Phnsw::inst_push, "nord", "nord", 1},
-    {"RMC", "remove element from W", &Phnsw::inst_rmc, "C_dist", "C_index", 8},
+    {"RMC", "remove element from C", &Phnsw::inst_rmc, "C_dist", "C_index", 8},
+    {"RMW", "remove element from W", &Phnsw::inst_rmw, "W_dist", "W_index", 8},
     {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
     {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
@@ -482,6 +482,50 @@ int Phnsw::inst_rmc(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     *rd2_ptr = *X_index_ptr;
     std::cout << "rd created" << std::endl;
     size_t loops = 60, target_addr = 60;
+    for (size_t i=0; i<loops; i++) {
+        if ((*X_index_ptr)[i] == index_to_rm) {
+            (*rd_ptr)[i] = 0;
+            (*rd2_ptr)[i] = 0;
+            target_addr = i;
+            break;
+        }
+    }
+    for(size_t i=target_addr; i<loops-1; i++) { // shift left
+        (*rd_ptr)[i] = (*rd_ptr)[i+1];
+        (*rd2_ptr)[i] = (*rd2_ptr)[i+1];
+    }
+    (*rd_ptr)[loops - 1] = 0;
+    (*rd2_ptr)[loops - 1] = 0;
+    return 0;
+}
+
+int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
+    size_t X_dist_size, X_index_size, idx_size, rd_size, rd2_size;
+    std::array<uint32_t, 40> *X_dist_ptr, *X_index_ptr, *rd_ptr, *rd2_ptr;
+    std::string idx = inst_now[inst_count][1];
+    uint32_t index_to_rm;
+    try {
+        index_to_rm = *(uint32_t *) Phnsw::Registers.find_match(idx, idx_size);
+        if (idx_size != sizeof(uint32_t)) {
+            output.fatal(CALL_INFO, -1, "ERROR: %s size not match!", idx.c_str());
+        }
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, idx.c_str());
+    }
+    std::cout << "index to rm=" << index_to_rm << std::endl;
+    try {
+        X_dist_ptr = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", X_dist_size);
+        X_index_ptr = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_index", X_index_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "C_index");
+    }
+    rd_ptr = (std::array<uint32_t, 40> *) rd_temp_ptr;
+    rd2_ptr = (std::array<uint32_t, 40> *) rd2_temp_ptr;
+    *rd_ptr = *X_dist_ptr;
+    *rd2_ptr = *X_index_ptr;
+    std::cout << "rd created" << std::endl;
+    size_t loops = 40, target_addr = 40;
     for (size_t i=0; i<loops; i++) {
         if ((*X_index_ptr)[i] == index_to_rm) {
             (*rd_ptr)[i] = 0;
