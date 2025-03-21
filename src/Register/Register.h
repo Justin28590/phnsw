@@ -72,6 +72,7 @@ struct Register {
         reg_map["i"]                 = new RegTemp<uint32_t>{"temp var", 0};
         reg_map["i20"]               = new RegTemp<uint32_t>{"temp var", 0};
         reg_map["dist1"]             = new RegTemp<uint32_t>{"dist1", 0};
+        std::cout << "Register init done" << std::endl;
     }
 
     /**
