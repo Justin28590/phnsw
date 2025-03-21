@@ -128,7 +128,7 @@ void phnswDMA::DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, st
 
     SST::Interfaces::StandardMem::Request *req;
     req = new SST::Interfaces::StandardMem::Write(addr, size, *data);
-    req->setNoncacheable(); // [x] Key point! if non-cacheable not set, nothing will be written
+    req->setNoncacheable(); // Key point! if non-cacheable not set, nothing will be written
     output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %lu, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
     output.output("%s\n", req->getString().c_str());
     requests[req->getID()] = timestamp;
