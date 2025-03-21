@@ -158,13 +158,13 @@ void Phnsw::setup() {
  * @return {*}
  */
 void Phnsw::complete(unsigned int phase) {
-    size_t C_dist_size, C_index_size;
-    std::array<uint32_t, 40> *list = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", C_dist_size);
-    std::array<uint32_t, 40> *list_index = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_index", C_index_size);
-    for (size_t i=0; i<40; i++) {
-        std::cout << "W_dist[" << i << "]=" << (*list)[i] << "; ";
-        std::cout << "W_index[" << i << "]=" << (*list_index)[i] << std::endl;
-    }
+    // size_t C_dist_size, C_index_size;
+    // std::array<uint32_t, 40> *list = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", C_dist_size);
+    // std::array<uint32_t, 40> *list_index = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_index", C_index_size);
+    // for (size_t i=0; i<40; i++) {
+    //     std::cout << "W_dist[" << i << "]=" << (*list)[i] << "; ";
+    //     std::cout << "W_index[" << i << "]=" << (*list_index)[i] << std::endl;
+    // }
     // list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_dist[10]", C_dist_size);
     // list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("C_index[10]", C_index_size);
     // for (size_t i=0; i<10; i++) {
