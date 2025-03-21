@@ -11,9 +11,11 @@ That means you can build this componet individually rather than building the who
 
 The building scripts in [Makefile](./src/Makefile) will register this component automatically after building. All you need to do is to execute this in your command line:
 ```
-make
+$ cd src
+$ make
 ```
 Then you can run the simulation by typing:
 ```
-sst tests/phnsw-test-001.py
+$ cd src
+$ sst tests/phnsw-test-001.py
 ```
