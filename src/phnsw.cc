@@ -233,12 +233,9 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
  * @return {*}
  */
 void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
-    std::unordered_map<uint64_t, SST::SimTime_t>::iterator i = requests.find(response->getID());
-    sst_assert(i != requests.end(), CALL_INFO, -1, "Received response but request not found! ID = %" PRIu64 "\n", response->getID());
-    requests.erase(i); // remove it from requests map
-    // display what message returned from memory
-    output.output("Time.%" PRIu64 " at %s\n", getCurrentSimCycle()/1000, response->getString().c_str());
-    num_events_returned++;
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
+    << "; respone: " << response->getString()
+    << std::endl;
     delete response;
 }
 
