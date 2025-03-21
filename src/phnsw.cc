@@ -583,7 +583,7 @@ int Phnsw::inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     } else if (rd_size == sizeof(uint32_t)) {
         tmp_value = (uint64_t) *((uint32_t *) rd_ptr);
     } else if (rd_size == sizeof(uint64_t)) {
-        std::cout<< ", Value " << (uint64_t) *((uint64_t *) rd_ptr);
+        tmp_value = (uint64_t) *((uint64_t*) rd_ptr);
     } else if (rd_size == sizeof(std::array<uint8_t, 128>)) {
         tmp_value = (uint64_t) (*(std::array<uint8_t, 128> *) rd_ptr)[0];
     } else if (rd_size == sizeof(std::array<uint32_t, 10>)) {
