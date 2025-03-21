@@ -29,12 +29,6 @@ namespace phnsw {
 
 /*****************************************************************************************************/
 
-// SubComponent API for a SubComponent that has two functions:
-// 1) It does a specific computation on a number
-//      Ex. Given 5, if the computation is 'x4', the subcomponent should return 20
-// 2) Given a formula string, it will update the formula with the computation it does
-//      Ex. Given '3+2', if the computation is 'x4', the subcomponent should return '(3+2)x4'
-
 class phnswDMAAPI : public SST::SubComponent
 {
 public:
@@ -57,7 +51,6 @@ public:
 
 /*****************************************************************************************************/
 
-/* SubComponent that does an 'increment' computation */
 class phnswDMA : public phnswDMAAPI {
 public:
     
