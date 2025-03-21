@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 14:10:17
+ * @LastEditTime: 2025-03-21 14:35:52
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -501,6 +501,7 @@ int Phnsw::inst_rmc(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
     (*rd_ptr)[loops - 1] = 0;
     (*rd2_ptr)[loops - 1] = 0;
+    // TODO reduce C_size by 1
     return 0;
 }
 
@@ -545,6 +546,7 @@ int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
     (*rd_ptr)[loops - 1] = 0;
     (*rd2_ptr)[loops - 1] = 0;
+    // TODO reduce W_size by 1
     return 0;
 }
 
