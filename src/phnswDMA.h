@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2024-12-31 02:14:24
+ * @LastEditTime: 2025-03-21 12:51:18
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -41,9 +41,9 @@ public:
     /* 
      * Register this API with SST so that SST can match subcomponent slots to subcomponents 
      */
-    SST_ELI_REGISTER_SUBCOMPONENT_API(SST::phnsw::phnswDMAAPI,TimeConverter*)
+    SST_ELI_REGISTER_SUBCOMPONENT_API(SST::phnsw::phnswDMAAPI,TimeConverter*,uint64_t*)
     
-    phnswDMAAPI(ComponentId_t id, Params& params, TimeConverter *time) : SubComponent(id) { }
+    phnswDMAAPI(ComponentId_t id, Params& params, TimeConverter *time, uint64_t *dma_res) : SubComponent(id) { }
     virtual ~phnswDMAAPI() { }
 
     // These are the two functions described in the comment above
@@ -103,7 +103,7 @@ public:
     )
 
 
-    phnswDMA(ComponentId_t id, Params& params, TimeConverter *time);
+    phnswDMA(ComponentId_t id, Params& params, TimeConverter *time, uint64_t *dma_res);
     // phnswDMA(const phnswDMA&) = delete;
     ~phnswDMA();
 
@@ -145,6 +145,7 @@ private:
     uint64_t num_events_issued;      // number of events that have been issued at a given time
     uint64_t num_events_returned;    // number of events that have returned
 
+    uint64_t *dma_res;
 };
 
 } } /* Namspaces */

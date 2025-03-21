@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2024-12-30 16:48:43
+ * @LastEditTime: 2025-03-21 14:11:07
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -40,8 +40,8 @@ using namespace phnsw;
  * @param {TimeConverter} *time comes from phnsw core (parent Component)
  * @return {*}
  */
-phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
-    phnswDMAAPI(id, params, time), clockTC(time)  {
+phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time, uint64_t *dma_res) :
+    phnswDMAAPI(id, params, time, dma_res), clockTC(time), dma_res(dma_res)  {
     setDefaultTimeBase(time);
     amount = params.find<int>("amount",  1);
 
@@ -156,9 +156,19 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
  * @return {*}
  */
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
+    std::vector<uint8_t> data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
+    uint8_t temp_data[8] = {0};
+    data[0]++ ;
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
     << "; respone: " << respone->getString()
+    << " Data=" << (uint16_t) data.back()
     << std::endl;
+    for (size_t i = 0; i < data.size(); i++) {
+        temp_data[i] = data[i];
+        std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
+    }
+    *dma_res = *(uint64_t *) temp_data;
+    std::cout << "dma_res=" << *dma_res << std::endl;
     delete respone;
 }
 

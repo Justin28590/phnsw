@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-13 16:46:07
+ * @LastEditTime: 2025-03-21 14:10:17
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -92,7 +92,14 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
 
     Params dmaparams;
 
-    dma = loadUserSubComponent<phnswDMAAPI>("dma", SST::ComponentInfo::SHARE_NONE/* , dmaparams */, clockTC);
+    uint64_t *dma_res;
+    size_t dma_res_size;
+    try {
+        dma_res = (uint64_t *) Phnsw::Registers.find_match("dma_res", dma_res_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_res");
+    }
+    dma = loadUserSubComponent<phnswDMAAPI>("dma", SST::ComponentInfo::SHARE_NONE, clockTC, dma_res);
 
     sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
 
@@ -245,6 +252,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"PUSH", "push element to list", &Phnsw::inst_push, "nord", "nord", 1},
     {"RMC", "remove element from C", &Phnsw::inst_rmc, "C_dist", "C_index", 8},
     {"RMW", "remove element from W", &Phnsw::inst_rmw, "W_dist", "W_index", 8},
+    {"DMA", "Access read from mem", &Phnsw::inst_dma, "nord", "nord", 1},
     {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
     {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
@@ -540,6 +548,29 @@ int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
     (*rd_ptr)[loops - 1] = 0;
     (*rd2_ptr)[loops - 1] = 0;
+    return 0;
+}
+
+int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    uint64_t *dma_addr, *dma_size;
+    uint64_t addr_size, size_size;
+    try {
+        dma_addr = (uint64_t *)Phnsw::Registers.find_match("dma_addr", addr_size);
+    }
+    catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_addr");
+    }
+    try {
+        dma_size = (uint64_t *)Phnsw::Registers.find_match("dma_offset", addr_size);
+    }
+    catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_offset");
+    }
+    std::cout << "time=" << getCurrentSimTime()
+    << " inst=DMA"
+    << " size=" << *dma_size
+    << std::endl;
+    dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr, (size_t) *dma_size);
     return 0;
 }
 
