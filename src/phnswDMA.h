@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 12:51:18
+ * @LastEditTime: 2025-03-21 20:13:16
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -35,13 +35,13 @@ public:
     /* 
      * Register this API with SST so that SST can match subcomponent slots to subcomponents 
      */
-    SST_ELI_REGISTER_SUBCOMPONENT_API(SST::phnsw::phnswDMAAPI,TimeConverter*,uint64_t*)
+    SST_ELI_REGISTER_SUBCOMPONENT_API(SST::phnsw::phnswDMAAPI,TimeConverter*)
     
-    phnswDMAAPI(ComponentId_t id, Params& params, TimeConverter *time, uint64_t *dma_res) : SubComponent(id) { }
+    phnswDMAAPI(ComponentId_t id, Params& params, TimeConverter *time) : SubComponent(id) { }
     virtual ~phnswDMAAPI() { }
 
     // These are the two functions described in the comment above
-    virtual void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) =0;
+    virtual void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) =0;
     virtual void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) =0;
 
     // Serialization
@@ -96,7 +96,7 @@ public:
     )
 
 
-    phnswDMA(ComponentId_t id, Params& params, TimeConverter *time, uint64_t *dma_res);
+    phnswDMA(ComponentId_t id, Params& params, TimeConverter *time);
     // phnswDMA(const phnswDMA&) = delete;
     ~phnswDMA();
 
@@ -106,7 +106,7 @@ public:
     // virtual void complete(unsigned int phase) override;
     // virtual void finish() override;
 
-    void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) override;
+    void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) override;
     void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
