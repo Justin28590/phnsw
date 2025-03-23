@@ -44,7 +44,8 @@ comp_scratch_dma.addParams({
     "size" : "1KiB",
     "scratch_line_size" : 64,
     "memory_line_size" : 64,
-    "backing" : "malloc"
+    "backing" : "malloc",
+    "initBacking" : 1
 })
 scratch_conv_dma = comp_scratch_dma.setSubComponent("backendConvertor", "memHierarchy.simpleMemScratchBackendConvertor")
 scratch_back_dma = scratch_conv_dma.setSubComponent("backend", "memHierarchy.simpleMem")
