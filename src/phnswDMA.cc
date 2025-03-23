@@ -159,18 +159,21 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
  * @return {*}
  */
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
-    std::vector<uint8_t> data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
+    std::cout << "handelEvent called" << std::endl;
+    // std::vector<uint8_t> data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
     uint8_t temp_data[8] = {0};
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
     << "; respone: " << respone->getString()
-    << " Data=" << (uint16_t) data.back()
+    // << " Data=" << (uint16_t) data.back()
     << std::endl;
-    for (size_t i = 0; i < data.size(); i++) {
-        temp_data[i] = data[i];
-        // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
-    }
-    std::memcpy(res, temp_data, res_size);
-    std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
+
+    // for (size_t i = 0; i < data.size(); i++) {
+    //     temp_data[i] = data[i];
+    //     // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
+    // }
+    // std::memcpy(res, temp_data, res_size);
+    // std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
+    
     delete respone;
 }
 
