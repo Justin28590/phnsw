@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 14:35:52
+ * @LastEditTime: 2025-03-21 21:58:08
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -92,14 +92,7 @@ Phnsw::Phnsw( SST::ComponentId_t id, SST::Params& params ) :
 
     Params dmaparams;
 
-    uint64_t *dma_res;
-    size_t dma_res_size;
-    try {
-        dma_res = (uint64_t *) Phnsw::Registers.find_match("dma_res", dma_res_size);
-    } catch (char *e) {
-        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_res");
-    }
-    dma = loadUserSubComponent<phnswDMAAPI>("dma", SST::ComponentInfo::SHARE_NONE, clockTC, dma_res);
+    dma = loadUserSubComponent<phnswDMAAPI>("dma", SST::ComponentInfo::SHARE_NONE, clockTC);
 
     sst_assert(dma, CALL_INFO, -1, "Unable to load dma subcomponent\n");
 
@@ -142,13 +135,13 @@ void Phnsw::setup() {
     // for (auto &&i : *raw2) {
     //     i = 10;
     // }
-    size_t list_size, list_index_size;
-    std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list", list_size);
-    std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list_index", list_index_size);
-    for (size_t i=0; i<10; i++) {
-        (*list)[i] = i*10;
-        (*list_index)[i] = i;
-    }
+    // size_t list_size, list_index_size;
+    // std::array<uint32_t, 10> *list = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list", list_size);
+    // std::array<uint32_t, 10> *list_index = (std::array<uint32_t, 10> *) Phnsw::Registers.find_match("list_index", list_index_size);
+    // for (size_t i=0; i<10; i++) {
+    //     (*list)[i] = i*10;
+    //     (*list_index)[i] = i;
+    // }
     // output.verbose(CALL_INFO, 1, 0, "Component is being setup.\n");
 }
 
@@ -192,6 +185,10 @@ void Phnsw::finish() {
 bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
     timestamp++;
     for (auto &i : inst_struct) {
+        // std::cout << "inst: " << i.asmop
+        // << " stage_now: " << *i.stage_now
+        // << " stages: " << i.stages
+        // << std::endl;
         if (*i.stage_now == i.stages) {
             *i.stage_now = 0;
             if (i.rd != "nord") {
@@ -205,7 +202,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
                 std::memcpy(rd2, i.rd2_temp, rd2_size);
             }
         } else {
-            (*i.stage_now) ++;
+            if (*i.stage_now != 0) (*i.stage_now) ++;
         }
     }
 
@@ -250,6 +247,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"RMC", "remove element from C", &Phnsw::inst_rmc, "C_dist", "C_index", 8},
     {"RMW", "remove element from W", &Phnsw::inst_rmw, "W_dist", "W_index", 8},
     {"DMA", "Access read from mem", &Phnsw::inst_dma, "nord", "nord", 1},
+    {"VST", "Access write to mem", &Phnsw::inst_vst, "vst_res", "nord", 1},
     {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
     {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
@@ -551,8 +549,8 @@ int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 }
 
 int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
-    uint64_t *dma_addr, *dma_size;
-    uint64_t addr_size, size_size;
+    uint64_t *dma_addr, *dma_size, *rd;
+    size_t addr_size, size_size, rd_size;
     try {
         dma_addr = (uint64_t *)Phnsw::Registers.find_match("dma_addr", addr_size);
     }
@@ -565,11 +563,55 @@ int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     catch (char *e) {
         output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_offset");
     }
+    try {
+        rd = (uint64_t *)Phnsw::Registers.find_match("dma_res", rd_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_res");
+    }
+
+    std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
+              << " size=" << *dma_size << std::endl;
+    dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr, (size_t) *dma_size, (void *) rd, rd_size);
+    return 0;
+}
+
+int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    *stage_now = 1;
+    uint32_t *vst_index;
+    uint8_t *vst_res;
+    size_t addr_size, res_size;
+    try {
+        vst_index = (uint32_t *)Phnsw::Registers.find_match("vst_index", addr_size);
+    }
+    catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "vst_index");
+    }
+    try {
+        vst_res = (uint8_t *)Phnsw::Registers.find_match("vst_res", res_size);
+    }
+    catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "vst_res");
+    }
+    SST::Interfaces::StandardMem::Addr spm_addr = *vst_index / 8;
+    uint32_t  spm_offset = *vst_index % 8;
     std::cout << "time=" << getCurrentSimTime()
-    << " inst=DMA"
-    << " size=" << *dma_size
+    << " inst=VST"
+    << " addr=" << spm_addr
+    << " offset=" << spm_offset
     << std::endl;
-    dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr, (size_t) *dma_size);
+
+    if (inst_now[inst_count][1] == "R") {
+        std::cout << "VST R" << std::endl;
+        dma->DMAread(spm_addr, 8, (void *) vst_res, res_size);
+    } else if (inst_now[inst_count][1] == "W") {
+        int wr_size = 1;
+        std::vector<uint8_t> data(wr_size, 0x1 << spm_offset);
+        std::cout << "VST W data=" << (uint32_t) data[0] << std::endl;
+        dma->DMAwrite(spm_addr, wr_size, &data);
+    } else {
+        output.fatal(CALL_INFO, -1, "ERROR: vst mode not found");
+    }
+
     return 0;
 }
 

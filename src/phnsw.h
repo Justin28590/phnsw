@@ -205,10 +205,11 @@ public:
         InstStruct(std::string asmop, std::string description, int (Phnsw::*handeler) (void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now), std::string rd, std::string rd2, uint32_t stages) :
             asmop(asmop), description(description), handeler(handeler), rd(rd), rd2(rd2), stages(stages) {
                 stage_now = new uint32_t(0);
+                // std::cout << "stage_now=" << *stage_now;
                 rd_temp = new char[Phnsw::Registers.find_size(rd)];
                 rd2_temp = new char[Phnsw::Registers.find_size(rd2)];
                 std::cout << "Create tmp reg " << rd << " size " << Phnsw::Registers.find_size(rd);
-                std::cout << " Create tmp reg2 " << rd2 << " size " << Phnsw::Registers.find_size(rd2) << std::endl;
+                std::cout << "\t\tCreate tmp reg2 " << rd2 << " size " << Phnsw::Registers.find_size(rd2) << std::endl;
             }
     };
     static const std::vector<InstStruct> inst_struct;
@@ -223,6 +224,7 @@ public:
     int inst_rmc(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
 };
