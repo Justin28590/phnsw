@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-24 02:05:42
+ * @LastEditTime: 2025-03-24 02:25:46
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -159,19 +159,20 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
  * @return {*}
  */
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
-    std::cout << "handelEvent called" << std::endl;
-    // std::vector<uint8_t> data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
+    std::vector<uint8_t> data;
+    if (typeid(*respone) == typeid(SST::Interfaces::StandardMem::ReadResp))
+        data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
     uint8_t temp_data[8] = {0};
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
     << "; respone: " << respone->getString()
     // << " Data=" << (uint16_t) data.back()
     << std::endl;
 
-    // for (size_t i = 0; i < data.size(); i++) {
-    //     temp_data[i] = data[i];
-    //     // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
-    // }
-    // std::memcpy(res, temp_data, res_size);
+    for (size_t i = 0; i < data.size(); i++) {
+        temp_data[i] = data[i];
+        // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
+    }
+    std::memcpy(res, temp_data, res_size);
     // std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
     
     delete respone;
