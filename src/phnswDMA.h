@@ -138,7 +138,8 @@ private:
     uint64_t num_events_issued;      // number of events that have been issued at a given time
     uint64_t num_events_returned;    // number of events that have returned
 
-    uint64_t *dma_res;
+    void *res;
+    size_t res_size;
 };
 
 } } /* Namspaces */
