@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 14:11:07
+ * @LastEditTime: 2025-03-21 22:21:07
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -40,8 +40,8 @@ using namespace phnsw;
  * @param {TimeConverter} *time comes from phnsw core (parent Component)
  * @return {*}
  */
-phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time, uint64_t *dma_res) :
-    phnswDMAAPI(id, params, time, dma_res), clockTC(time), dma_res(dma_res)  {
+phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
+    phnswDMAAPI(id, params, time), clockTC(time) {
     setDefaultTimeBase(time);
     amount = params.find<int>("amount",  1);
 
@@ -92,7 +92,7 @@ phnswDMA::~phnswDMA() { }
  * @param {size_t} size of read data
  * @return {*}
  */
-void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) {
+void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *rd_res, size_t rd_res_size) {
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
     << std::hex << addr
     << std::dec << " and size " << size
@@ -106,6 +106,9 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size) {
     requests[req->getID()] = timestamp;
     memory->send(req);
     num_events_issued++;
+    res = rd_res;
+    std::cout << "res=" << std::hex <<  (uint32_t) *(uint8_t *) res << std::dec << std::endl;
+    res_size = rd_res_size;
 }
 
 /**
@@ -131,7 +134,7 @@ void phnswDMA::DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, st
     req->setNoncacheable(); // Key point! if non-cacheable not set, nothing will be written
     output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %lu, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
     output.output("%s\n", req->getString().c_str());
-    requests[req->getID()] = timestamp;
+    // requests[req->getID()] = timestamp;
     memory->send(req);
     num_events_issued++;
 }
@@ -158,17 +161,16 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
     std::vector<uint8_t> data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
     uint8_t temp_data[8] = {0};
-    data[0]++ ;
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
     << "; respone: " << respone->getString()
     << " Data=" << (uint16_t) data.back()
     << std::endl;
     for (size_t i = 0; i < data.size(); i++) {
         temp_data[i] = data[i];
-        std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
+        // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
     }
-    *dma_res = *(uint64_t *) temp_data;
-    std::cout << "dma_res=" << *dma_res << std::endl;
+    std::memcpy(res, temp_data, res_size);
+    std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
     delete respone;
 }
 
