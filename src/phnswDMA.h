@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 20:13:16
+ * @LastEditTime: 2025-03-24 01:30:29
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -43,6 +43,7 @@ public:
     // These are the two functions described in the comment above
     virtual void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) =0;
     virtual void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) =0;
+    virtual void Resset(void *res, size_t res_size) =0;
 
     // Serialization
     phnswDMAAPI();
@@ -111,6 +112,7 @@ public:
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
     void handleEvent( SST::Interfaces::StandardMem::Request *ev );
+    void Resset(void *res, size_t res_size);
 
 private:
     int amount;

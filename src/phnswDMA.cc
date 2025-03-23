@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 22:21:07
+ * @LastEditTime: 2025-03-24 02:05:42
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -186,4 +186,9 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
 void phnswDMA::init(unsigned int phase) {
     memory->init(phase);
     std::cout << "memory->init(phase) called" << std::endl;
+}
+
+void phnswDMA::Resset(void *res, size_t res_size) {
+    phnswDMA::res = res;
+    phnswDMA::res_size = res_size;
 }

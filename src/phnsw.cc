@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-21 21:58:08
+ * @LastEditTime: 2025-03-24 02:03:11
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -604,7 +604,8 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         std::cout << "VST R" << std::endl;
         dma->DMAread(spm_addr, 8, (void *) vst_res, res_size);
     } else if (inst_now[inst_count][1] == "W") {
-        int wr_size = 1;
+        dma->Resset(vst_res, res_size);
+        int wr_size = 16;
         std::vector<uint8_t> data(wr_size, 0x1 << spm_offset);
         std::cout << "VST W data=" << (uint32_t) data[0] << std::endl;
         dma->DMAwrite(spm_addr, wr_size, &data);
