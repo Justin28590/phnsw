@@ -43,7 +43,7 @@ struct Register {
         reg_map["dma_offset"]  = new RegTemp<uint64_t>{"DMA read length", 0};
         reg_map["num1"]        = new RegTemp<uint8_t>{"ALU", 0};
         reg_map["num2"]        = new RegTemp<uint8_t>{"ALU", 0};
-        reg_map["visit_index"] = new RegTemp<uint32_t>{"VISIT", 0};
+        reg_map["vst_index"] = new RegTemp<uint32_t>{"VISIT", 0};
         reg_map["jmp_addr"]    = new RegTemp<uint64_t>{"JMP", 0};
         reg_map["raw_index"]   = new RegTemp<uint8_t>{"fetch RAW from SPM", 0};
         reg_map["wrm_index"]   = new RegTemp<uint32_t>{"WRM", 0};
@@ -55,7 +55,7 @@ struct Register {
         reg_map["cmp_res"]        = new RegTemp<uint8_t>{"CMP", 0};
         reg_map["dma_res"]        = new RegTemp<uint64_t>{"DMA", 0};
         reg_map["alu_res"]        = new RegTemp<uint8_t>{"ALU", 0};
-        reg_map["visit_res"]      = new RegTemp<uint8_t>{"VISIT", 0};
+        reg_map["vst_res"]      = new RegTemp<uint8_t>{"VISIT", 0};
         reg_map["raw_res"]        = new RegTemp<std::array<uint8_t, 128>>{"RAW", {0}};
         reg_map["addr"]           = new RegTemp<uint32_t>{"index2addr", 0};
         // Vars
