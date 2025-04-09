@@ -63,6 +63,8 @@ memctrl_dma.addParams({
       "debug_level" : 10,
       "clock" : "1GHz",
       "addr_range_start" : 0,
+      "backing" : "mmap",
+      "memory_file" : '../src/datasetx/sift/sift_base.fvecs'
 })
 memory_dma = memctrl_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 memory_dma.addParams({
