@@ -68,7 +68,7 @@ memctrl_dma.addParams({
 })
 memory_dma = memctrl_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 memory_dma.addParams({
-    "access_time" : "1000 ns",
+    "access_time" : "1 ns", # TODO
     "mem_size" : "512MiB"
 })
 
