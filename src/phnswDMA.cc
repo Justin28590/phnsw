@@ -78,6 +78,10 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
             );
 
     sst_assert(memory, CALL_INFO, -1, "Unable to load scratchInterface subcomponent\n");
+    res = malloc(sizeof(uint64_t));
+    
+    // Disable StOP Flag
+    phnswDMA::stopFlag = false;
 }
 
 /**
@@ -174,6 +178,7 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
  * @return {*}
  */
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
+    phnsw::phnswDMA::stopFlag = false;
     std::vector<uint8_t> data;
     if (typeid(*respone) == typeid(SST::Interfaces::StandardMem::ReadResp))
         data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;

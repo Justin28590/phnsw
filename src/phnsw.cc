@@ -189,7 +189,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
         // << " stage_now: " << *i.stage_now
         // << " stages: " << i.stages
         // << std::endl;
-        if (*i.stage_now == i.stages) {
+        if (*i.stage_now >= i.stages) {
             *i.stage_now = 0;
             if (i.rd != "nord") {
                 size_t rd_size;
@@ -206,18 +206,22 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
         }
     }
 
+    
     Phnsw::inst_count = 0;
-    inst_now = Phnsw::img[pc];
-    for (auto &inst : inst_now) {
-        for(auto &&i : inst_struct) {
-            if (inst[0].compare(i.asmop) == 0) {
-                (this->*(i.handeler))(i.rd_temp, i.rd2_temp, i.stage_now); // Exe instruction function
+    // std::cout << pc << std::endl;
+    if (dma->stopFlag == false) {
+        inst_now = Phnsw::img[pc];
+        for (auto &inst : inst_now) {
+            for(auto &&i : inst_struct) {
+                if (inst[0].compare(i.asmop) == 0) {
+                    (this->*(i.handeler))(i.rd_temp, i.rd2_temp, i.stage_now); // Exe instruction function
+                }
             }
+            inst_count ++;
         }
-        inst_count ++;
+        inst_time ++;
+        pc ++;
     }
-    inst_time ++;
-    pc ++;
     return false;
 }
 
@@ -573,6 +577,7 @@ int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 }
 
 int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    dma->stopFlag = true;
     uint64_t *dma_addr, *dma_size, *rd;
     size_t addr_size, size_size, rd_size;
     try {

@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-24 01:30:29
+ * @LastEditTime: 2025-04-18 15:35:15
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -53,6 +53,9 @@ public:
     virtual void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) =0;
     virtual void DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) =0;
     virtual void Resset(void *res, size_t res_size) =0;
+
+    // Stop Flag
+    bool stopFlag;
 
     // Serialization
     phnswDMAAPI();
@@ -120,6 +123,8 @@ public:
     void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) override;
     void DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
+
+    // bool stopFalg;
 
     void handleEvent( SST::Interfaces::StandardMem::Request *ev );
     void Resset(void *res, size_t res_size);
