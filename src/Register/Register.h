@@ -40,6 +40,7 @@ struct Register {
         reg_map["cmp1"]        = new RegTemp<uint32_t>{"CMP", 0};
         reg_map["cmp2"]        = new RegTemp<uint32_t>{"CMP", 0};
         reg_map["dma_addr"]    = new RegTemp<uint64_t>{"DMA start addr", 0};
+        reg_map["DMAindex"]      = new RegTemp<uint32_t>{"Raw data or Neighbors of point(index)", 0};
         reg_map["dma_offset"]  = new RegTemp<uint64_t>{"DMA read length", 0};
         reg_map["num1"]        = new RegTemp<uint8_t>{"ALU", 0};
         reg_map["num2"]        = new RegTemp<uint8_t>{"ALU", 0};
