@@ -226,6 +226,7 @@ public:
     int inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_raw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
 };

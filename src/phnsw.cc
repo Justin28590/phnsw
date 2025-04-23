@@ -253,6 +253,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"RMW", "remove element from W", &Phnsw::inst_rmw, "W_dist", "W_index", 8},
     {"DMA", "Access read from mem", &Phnsw::inst_dma, "nord", "nord", 1},
     {"VST", "Access write to mem", &Phnsw::inst_vst, "vst_res", "nord", 1},
+    {"RAW", "Load RAW From SPM to RAW1", &Phnsw::inst_raw, "nord", "nord", 1},
     {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
     {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
@@ -678,6 +679,15 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         output.fatal(CALL_INFO, -1, "ERROR: vst mode not found");
     }
 
+    return 0;
+}
+
+int Phnsw::inst_raw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    dma->stopFlag = true;
+    size_t rd_size;
+    std::array<float, 128> *rd = (std::array<float, 128> *) Phnsw::Registers.find_match("raw1", rd_size);
+
+    dma->DMAread(SPM_RAW_BASE, SPM_RAW_SIZE, (void *) rd, rd_size);
     return 0;
 }
 
