@@ -4,9 +4,11 @@
 *.out
 *log*
 *.dot
+*.json
 ana
 **.tar.gz
 .vscode
+.cache
 tests/__pycache__/*
 src/datasetx
 **/instructions/*.h
