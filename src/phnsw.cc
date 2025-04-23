@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-23 20:30:23
+ * @LastEditTime: 2025-04-23 20:33:47
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -405,17 +405,17 @@ int Phnsw::inst_cmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 
 int Phnsw::inst_dist(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     *stage_now = 1;
-    std::array<uint8_t,  128> *src1_ptr, *src2_ptr;
+    std::array<float,  128> *src1_ptr, *src2_ptr;
     uint32_t *rd_ptr;
     size_t src1_size, src2_size, rd_size;
-    src1_ptr = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw1", src1_size);
-    src2_ptr = (std::array<uint8_t, 128> *) Phnsw::Registers.find_match("raw2", src2_size);
+    src1_ptr = (std::array<float, 128> *) Phnsw::Registers.find_match("raw1", src1_size);
+    src2_ptr = (std::array<float, 128> *) Phnsw::Registers.find_match("raw2", src2_size);
     rd_ptr = (uint32_t *) rd_temp_ptr;
     *rd_ptr = 0;
     for(size_t i=0; i<src1_ptr->size(); i++) {
-        *rd_ptr += ((*src1_ptr)[i] * (*src1_ptr)[i] >> 1)
+        *rd_ptr += ((*src1_ptr)[i] * (*src1_ptr)[i] / 2)
                  - (*src2_ptr)[i] * (*src1_ptr)[i]
-                 + ((*src2_ptr)[i] * (*src2_ptr)[i] >> 1);
+                 + ((*src2_ptr)[i] * (*src2_ptr)[i] / 2);
     }
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "inst: " << "DIST" << "; ";
