@@ -19,6 +19,14 @@
  *  
  * See 'basicSubComponent_component.h' for more information on how the example simulation works
  */
+
+#define SPM_NEIGHBOR_ADDR 0x0
+#define SPM_NEIGHBOR_SIZE 0x80 // 0x80(16) = 128(10) in bytes = 32 * 4(bytes)
+#define SPM_RAW_BASE SPM_NEIGHBOR_SIZE
+#define MEM_ADDR_BASE 0x400 // 0x400(16) = 1024(10)
+#define MEM_NEIGHBOR ADDR 0X0
+#define MEM_NEIGHBOR_SIZE 1280000
+#define MEM_RAW_BASE 0x138800
     
 #include <sst/core/subcomponent.h>
 #include <sst/core/interfaces/stdMem.h>
