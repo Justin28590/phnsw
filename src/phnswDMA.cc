@@ -111,6 +111,21 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, voi
     res_size = rd_res_size;
 }
 
+void phnswDMA::DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) {
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAget()> DMA get called with srcAddr 0x"
+    << std::hex << srcAddr
+    << std::dec << " and dstAddr 0x"<< std::hex << dstAddr
+    << " at cycle " << std::dec << getCurrentSimTime()
+    << std::dec << " and data_size " << data_size
+    << std::endl;
+
+    SST::Interfaces::StandardMem::Request *req;
+    req = new Interfaces::StandardMem::MoveData(srcAddr, dstAddr, data_size);
+    requests[req->getID()] = timestamp;
+    memory->send(req);
+    num_events_issued++;
+}
+
 /**
  * @description: DMA send Write request to memroy or scratchpad, call by phnsw core (parent Component).
  * @param {Addr} addr to write
@@ -168,11 +183,13 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
     // << " Data=" << (uint16_t) data.back()
     << std::endl;
 
-    for (size_t i = 0; i < data.size(); i++) {
-        temp_data[i] = data[i];
-        // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
+    if (typeid(*respone) == typeid(SST::Interfaces::StandardMem::ReadResp)) {
+        for (size_t i = 0; i < data.size(); i++) {
+            temp_data[i] = data[i];
+            // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
+        }
+        std::memcpy(res, temp_data, res_size);
     }
-    std::memcpy(res, temp_data, res_size);
     // std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
     
     delete respone;
