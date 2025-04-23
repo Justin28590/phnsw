@@ -680,7 +680,7 @@ int Phnsw::inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now
 void Phnsw::load_inst_creat_img() {
     Phnsw::pc = 0; // reset pc
     std::ifstream img_file;
-    img_file.open("instructions/dummy.asm");
+    img_file.open("instructions/instructions2.asm");
     std::string inst_line;
     std::vector<std::vector<std::string>> inst_single_cycle;
     while (std::getline(img_file, inst_line)) {
