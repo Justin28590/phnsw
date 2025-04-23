@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-18 15:35:15
+ * @LastEditTime: 2025-04-23 20:23:18
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -23,6 +23,7 @@
 #define SPM_NEIGHBOR_ADDR 0x0
 #define SPM_NEIGHBOR_SIZE 0x80 // 0x80(16) = 128(10) in bytes = 32 * 4(bytes)
 #define SPM_RAW_BASE SPM_NEIGHBOR_SIZE
+#define SPM_RAW_SIZE 128 * 4 // 128(dim) * 4(bytes)(float32)
 #define MEM_ADDR_BASE 0x400 // 0x400(16) = 1024(10)
 #define MEM_NEIGHBOR ADDR 0X0
 #define MEM_NEIGHBOR_SIZE 1280000
@@ -127,7 +128,7 @@ public:
     // bool stopFalg;
 
     void handleEvent( SST::Interfaces::StandardMem::Request *ev );
-    void Resset(void *res, size_t res_size);
+    void Resset(void *res, size_t res_size) override;
 
 private:
     int amount;
