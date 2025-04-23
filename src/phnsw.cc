@@ -2,16 +2,19 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-18 16:01:45
+ * @LastEditTime: 2025-04-23 20:30:23
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
  * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
 #include "phnsw.h"
+#include "phnswDMA.h"
 
 #ifndef _UTIL_H_
 #define _UTIL_H_
@@ -20,6 +23,8 @@
 
 #include <sst/core/interfaces/stringEvent.h>
 #include <sst/core/realtimeAction.h>
+
+#include <bitset>
 
 using namespace SST;
 using namespace phnsw;

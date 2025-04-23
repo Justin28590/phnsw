@@ -49,7 +49,7 @@
 #define _PHNSW_H
 
 #include <fstream>
-#include <sstream>
+// #include <sstream>
 
 #include <sst/core/component.h>
 #include <sst/core/interfaces/stdMem.h>
@@ -57,9 +57,8 @@
 #include <sst/core/rng/marsaglia.h>
 
 #include <unordered_map>
-#include <variant>
-#include <bitset>
-#include <algorithm>
+// #include <variant>
+// #include <algorithm>
 
 // Include file for the SubComponent API we'll use
 #include "phnswDMA.h"
