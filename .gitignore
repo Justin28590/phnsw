@@ -4,11 +4,14 @@
 *.out
 *log*
 *.dot
+ana
 **.tar.gz
 .vscode
 tests/__pycache__/*
 src/datasetx
 **/instructions/*.h
 **/instructions/*.cc
-dummy.asm
+**/instructions/*.png
+dummy**.asm
+instructions2.asm
 **/Register/**.cc
