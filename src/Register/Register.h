@@ -32,8 +32,8 @@ struct Register {
     /* {"reg_name", "description", init value} */
     Register () {
         // Sources
-        reg_map["raw1"]        = new RegTemp<std::array<uint8_t,  128>>{"DistCalc", {0}};
-        reg_map["raw2"]        = new RegTemp<std::array<uint8_t,  128>>{"DistCalc", {0}};
+        reg_map["raw1"]        = new RegTemp<std::array<float,  128>>{"DistCalc", {0}};
+        reg_map["raw2"]        = new RegTemp<std::array<float,  128>>{"DistCalc", {0}};
         reg_map["list"]        = new RegTemp<std::array<uint32_t, 10>>{"LookUp", {0}};
         reg_map["list_index"]  = new RegTemp<std::array<uint32_t, 10>>{"LookUp", {0}};
         reg_map["target"]      = new RegTemp<uint32_t>{"LookUp", 0};
@@ -57,7 +57,7 @@ struct Register {
         reg_map["dma_res"]        = new RegTemp<uint64_t>{"DMA", 0};
         reg_map["alu_res"]        = new RegTemp<uint8_t>{"ALU", 0};
         reg_map["vst_res"]      = new RegTemp<uint8_t>{"VISIT", 0};
-        reg_map["raw_res"]        = new RegTemp<std::array<uint8_t, 128>>{"RAW", {0}};
+        reg_map["raw_res"]        = new RegTemp<std::array<float, 128>>{"RAW", {0}};
         reg_map["addr"]           = new RegTemp<uint32_t>{"index2addr", 0};
         // Vars
         reg_map["C_dist"]            = new RegTemp<std::array<uint32_t, 60>>{"Candidate Dist", {0}};
