@@ -59,9 +59,9 @@ scratch_conv_dma.addParams({
 })
 memctrl_dma = sst.Component("memory0", "memHierarchy.MemController")
 memctrl_dma.addParams({
+      "clock" : "1GHz",
       "debug" : DEBUG_MEM,
       "debug_level" : 10,
-      "clock" : "1GHz",
       "addr_range_start" : 0,
       "backing" : "mmap",
       "memory_file" : '../src/datasetx/unpack/siftsmall/output.bin'
