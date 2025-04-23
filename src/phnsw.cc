@@ -568,7 +568,41 @@ int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     } catch (char *e) {
         output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "dma_res");
     }
+    std::string option = inst_now[inst_count][1];
+    size_t index_size;
+    uint32_t *index = (uint32_t *) Phnsw::Registers.find_match("DMAindex", index_size);
+    // std::cout << "DMAindex=" << *index << std::endl;
+    if (option == "R") {
+        // std::cout << "DMA R" << std::endl;
+        *dma_addr = MEM_ADDR_BASE + MEM_RAW_BASE + *index * 128 * 4; // dim = 128
+        *dma_size = 128 * 4;
+        SST::Interfaces::StandardMem::Addr dstspmAddr = SPM_RAW_BASE;
+        dma->DMAget((SST::Interfaces::StandardMem::Addr) *dma_addr,
+                        dstspmAddr,
+                        (uint32_t) *dma_size);
+    } else if (option == "N") {
+        // std::cout << "DMA N" << std::endl;
+        *dma_addr = MEM_ADDR_BASE + *index * 32 * 4; // neighbor_list.size() = 32
+        // std::cout << "dma_addr=" << *dma_addr << std::endl;
+        *dma_size = 32 * 4;
+        SST::Interfaces::StandardMem::Addr dstspmAddr = 0;
+        dma->DMAget((SST::Interfaces::StandardMem::Addr) *dma_addr,
+                        dstspmAddr,
+                        (uint32_t) *dma_size);
+    } else if (option == "A") {
+        *dma_addr = *dma_addr;
+        std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
+        << " size=" << *dma_size << std::endl;
+        dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr,
+                        (size_t) *dma_size,
+                        (void *) rd, rd_size);
+        return 0;
+    } else {
+        output.fatal(CALL_INFO, -1, "ERROR: %s is invalid dma_option", option.c_str());
+    }
 
+    // Read R: mem -> ?
+    // Read N: mem -> spm
     std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
               << " size=" << *dma_size << std::endl;
     dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr, (size_t) *dma_size, (void *) rd, rd_size);
