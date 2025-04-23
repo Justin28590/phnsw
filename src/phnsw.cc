@@ -633,8 +633,9 @@ int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     // Read R: mem -> ?
     // Read N: mem -> spm
     std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
-              << " size=" << *dma_size << std::endl;
-    dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr, (size_t) *dma_size, (void *) rd, rd_size);
+    << " dma addr=" << *dma_addr
+    << " size=" << *dma_size
+    << std::endl;
     return 0;
 }
 
