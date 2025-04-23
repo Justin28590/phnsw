@@ -719,16 +719,16 @@ void Phnsw::load_inst_creat_img() {
 }
 
 void Phnsw::display_img() {
-    size_t display_time = 0;
+    size_t display_pc = 0;
     for (auto &&i : Phnsw::img) {
-        std::cout << "time=" <<  display_time << "; ";
+        std::cout << "pc=" <<  display_pc << "; ";
         for (auto &&j : i) {
             for (auto &&word : j) {
                 std::cout << word << " ";
             }
             std::cout << "; ";
         }
-        display_time ++;
+        display_pc ++;
         std::cout << std::endl;
     }
 }
