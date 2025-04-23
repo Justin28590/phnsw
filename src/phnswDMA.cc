@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-03-24 02:25:46
+ * @LastEditTime: 2025-04-18 15:38:00
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -111,7 +111,7 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, voi
     memory->send(req);
     num_events_issued++;
     res = rd_res;
-    std::cout << "res=" << std::hex <<  (uint32_t) *(uint8_t *) res << std::dec << std::endl;
+    // std::cout << "res=" << std::hex <<  (uint32_t) *(uint8_t *) res << std::dec << std::endl;
     res_size = rd_res_size;
 }
 
