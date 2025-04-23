@@ -215,6 +215,7 @@ public:
     static const std::vector<InstStruct> inst_struct;
     // module functions
     int inst_end(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    int inst_jmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_mov(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_add(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_cmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);

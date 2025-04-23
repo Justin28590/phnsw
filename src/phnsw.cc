@@ -238,6 +238,7 @@ void Phnsw::handleEvent(SST::Interfaces::StandardMem::Request * response) {
 
 const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"END", "end the simulation", &Phnsw::inst_end, "nord", "nord", 1},
+    {"JMP", "jump to a pc", &Phnsw::inst_jmp, "nord", "nord", 1},
     {"MOV", "move data between regs", &Phnsw::inst_mov, "nord", "nord", 1},
     {"ADD", "add two numbers", &Phnsw::inst_add, "alu_res", "nord", 1},
     {"CMP", "cmp two numbers", &Phnsw::inst_cmp, "cmp_res", "nord", 1},
@@ -254,6 +255,29 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
 int Phnsw::inst_end(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     std::cout << "pc=" << Phnsw::pc << " " << "inst: " << "END" << std::endl;
     primaryComponentOKToEndSim();
+    return 0;
+}
+
+int Phnsw::inst_jmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    std::string imm_name = inst_now[inst_count][1];
+    int imm;
+    if (imm_name.back() == ']' && imm_name[0] == '[') {
+        imm = std::stoull(imm_name.substr(1, imm_name.size() - 2));
+    } else {
+        output.fatal(CALL_INFO, -1, "ERROR: %s", "jmp imm must be in [imm] format");
+    }
+    uint8_t *cmp_res;
+    size_t cmp_size;
+    try {
+        cmp_res = (uint8_t *) Phnsw::Registers.find_match("cmp_res", cmp_size);
+    } catch (char *e) {
+        output.fatal(CALL_INFO, -1, "ERROR: %s cmp_res", e);
+    }
+
+    if (*cmp_res == 1) {
+        Phnsw::pc = imm;
+        Phnsw::pc --;
+    }
     return 0;
 }
 
