@@ -32,8 +32,8 @@ struct Register {
     /* {"reg_name", "description", init value} */
     Register () {
         // Sources
-        reg_map["raw1"]        = new RegTemp<std::array<float,  128>>{"DistCalc", {0}};
-        reg_map["raw2"]        = new RegTemp<std::array<float,  128>>{"DistCalc", {0}};
+        reg_map["raw1"]        = new RegTemp<std::array<float_t,  128>>{"DistCalc", {0}};
+        reg_map["raw2"]        = new RegTemp<std::array<float_t,  128>>{"DistCalc", {0}};
         reg_map["list"]        = new RegTemp<std::array<uint32_t, 10>>{"LookUp", {0}};
         reg_map["list_index"]  = new RegTemp<std::array<uint32_t, 10>>{"LookUp", {0}};
         reg_map["target"]      = new RegTemp<uint32_t>{"LookUp", 0};
@@ -84,11 +84,12 @@ struct Register {
      */
     void* find_match(const std::string& name, size_t& size) {
         if (reg_map.find(name) == reg_map.end()) {
+            std::cout << "Register not found: " << name << std::endl;
             throw "Register not found: ";
         }
         size = *(size_t *) (reg_map[name]);
-        if (size == sizeof(std::array<uint8_t, 128>)) {
-            return &((RegTemp<std::array<uint8_t, 128>> *) (reg_map[name]))->reg;
+        if (size == sizeof(std::array<float, 128>)) {
+            return &((RegTemp<std::array<float, 128>> *) (reg_map[name]))->reg;
         } else if (size == sizeof(std::array<uint32_t, 10>)) {
             return &((RegTemp<std::array<uint32_t, 10>> *) (reg_map[name]))->reg;
         } else if (size == sizeof(std::array<uint32_t, 40>)) { // W
@@ -102,6 +103,7 @@ struct Register {
         } else if (size == sizeof(uint64_t)) {
             return &((RegTemp<uint64_t> *) (reg_map[name]))->reg;
         }
+        std::cout << "Register type not found: " << name << std::endl;
         throw "Register type not found";
     }
 

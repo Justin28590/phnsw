@@ -445,15 +445,18 @@ int Phnsw::inst_dist(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     src2_ptr = (std::array<float, 128> *) Phnsw::Registers.find_match("raw2", src2_size);
     rd_ptr = (uint32_t *) rd_temp_ptr;
     *rd_ptr = 0;
+    float dist_tmp = 0;
     for(size_t i=0; i<src1_ptr->size(); i++) {
-        *rd_ptr += ((*src1_ptr)[i] * (*src1_ptr)[i] / 2)
-                 - (*src2_ptr)[i] * (*src1_ptr)[i]
-                 + ((*src2_ptr)[i] * (*src2_ptr)[i] / 2);
+        float t = src1_ptr->at(i) - src2_ptr->at(i);
+        // std::cout << "t^2=" << t * t << "; ";
+        dist_tmp += pow(t, 2);
     }
+    *rd_ptr = (uint32_t) dist_tmp;
+    std::cout << std::endl;
     std::cout << "pc=" << Phnsw::pc << " ";
     std::cout << "inst: " << "DIST" << "; ";
-    std::cout << "raw1[0]" << (uint32_t) (*src1_ptr)[0] << "; ";
-    std::cout << "raw2[0]" << (uint32_t) (*src2_ptr)[0] << "; ";
+    std::cout << "raw1[0] " << (float) (*src1_ptr)[0] << "; ";
+    std::cout << "raw2[0] " << (float) (*src2_ptr)[0] << "; ";
     std::cout << "Value " << *rd_ptr << std::endl;
     return 0;
 }
