@@ -200,6 +200,7 @@ bool Phnsw::clockTick( SST::Cycle_t currentCycle ) {
                 size_t rd_size;
                 void *rd = Registers.find_match(i.rd, rd_size);
                 std::memcpy(rd, i.rd_temp, rd_size);
+                // if (i.rd == "dist_res") std::cout << "dist_res: " << *(float *)rd << std::endl;
             }
             if (i.rd2 != "nord") {
                 size_t rd2_size;
