@@ -264,6 +264,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"DMA", "Access read from mem", &Phnsw::inst_dma, "nord", "nord", 1},
     {"VST", "Access write to mem", &Phnsw::inst_vst, "vst_res", "nord", 1},
     {"RAW", "Load RAW From SPM to RAW1", &Phnsw::inst_raw, "nord", "nord", 1},
+    {"NEI", "Load N[i] from SPM to DAMindex", &Phnsw::inst_nei, "nord", "nord", 1},
     {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
     {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
@@ -819,6 +820,17 @@ int Phnsw::inst_raw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     rd = (std::array<float, 128> *) Phnsw::Registers.find_match("raw1", rd_size);
 
     dma->DMAspmrd(SPM_RAW_BASE, SPM_RAW_SIZE, (void *) rd, rd_size);
+    return 0;
+}
+
+int Phnsw::inst_nei(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    dma->stopFlag = true;
+    size_t rd_size = 0, i_size = 0;
+    uint32_t *rd = (uint32_t *) Phnsw::Registers.find_match("DMAindex", rd_size);
+    uint32_t *i = (uint32_t *) Phnsw::Registers.find_match("i", rd_size);
+    uint32_t addr_of_nei = SPM_NEIGHBOR_ADDR + (*i * 4);
+
+    dma->DMAread(addr_of_nei, 4, (void *) rd, rd_size);
     return 0;
 }
 
