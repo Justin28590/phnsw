@@ -4,6 +4,7 @@
 *.out
 *log*
 *.dot
+*.txt
 *.json
 ana
 **.tar.gz
