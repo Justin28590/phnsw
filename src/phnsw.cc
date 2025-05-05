@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-23 20:33:47
+ * @LastEditTime: 2025-05-05 15:25:00
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -561,7 +561,7 @@ int Phnsw::inst_rmc(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         }
     } catch (char *e) {
         output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, idx.c_str());
-    std::cout << "index to rm=" << index_to_rm << std::endl;
+    }
     try {
         X_dist_ptr = (std::array<uint32_t, 60> *) Phnsw::Registers.find_match("C_dist", X_dist_size);
         X_index_ptr = (std::array<uint32_t, 60> *) Phnsw::Registers.find_match("C_index", X_index_size);
@@ -797,6 +797,7 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 
     if (inst_now[inst_count][1] == "R") {
         std::cout << "VST R" << std::endl;
+        dma->stopFlag = true;
         dma->DMAread(spm_addr, 8, (void *) vst_res, res_size);
     } else if (inst_now[inst_count][1] == "W") {
         dma->Resset(vst_res, res_size);
@@ -839,7 +840,7 @@ int Phnsw::inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     } else if (rd_size == sizeof(std::array<uint32_t, 10>)) {
         tmp_value = (uint64_t) (*(std::array<uint32_t, 10> *) rd_ptr)[0];
     }
-    std::cout<< ", Value " << tmp_value << "(" << std::bitset<sizeof(uint64_t) * 8>(tmp_value) << ")";
+    std::cout<< ", Value " << std::hex << tmp_value << std::dec << "(" << std::bitset<sizeof(uint64_t) * 8>(tmp_value) << ")";
     std::cout << ", Size " << rd_size
     << std::endl;
     return 0;
@@ -853,6 +854,7 @@ void Phnsw::load_inst_creat_img() {
     Phnsw::pc = 0; // reset pc
     std::ifstream img_file;
     img_file.open("instructions/instructions2.asm");
+    assert(img_file);
     std::string inst_line;
     std::vector<std::vector<std::string>> inst_single_cycle;
     while (std::getline(img_file, inst_line)) {
