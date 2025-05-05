@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-05-05 10:46:43
+ * @LastEditTime: 2025-05-05 20:15:26
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
+#include <vector>
 
 #include "phnswDMA.h"
 
@@ -85,6 +86,10 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
     phnswDMA::stopFlag = false;
 
     phnswDMA::is_spm = false;
+
+    phnswDMA::is_vst = false;
+    phnswDMA::is_vst_write = false;
+    phnswDMA::vst_offset = 0;
 }
 
 /**
@@ -116,6 +121,11 @@ void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, voi
     res = rd_res;
     // std::cout << "res=" << std::hex <<  (uint32_t) *(uint8_t *) res << std::dec << std::endl;
     res_size = rd_res_size;
+}
+
+void phnswDMA::DMAvst(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) {
+    vst_tmp_addr = addr;
+    phnswDMA::DMAread(addr, size, res, res_size);
 }
 
 void phnswDMA::DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) {
@@ -215,12 +225,27 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
             temp_data[i] = data[i];
             // std::cout << "temp_data[" << i << "]=" << (uint16_t) temp_data[i] << std::endl;
         }
+        if (is_vst) {
+            is_vst = false;
+            std::cout << "vst read temp_data[0]=" << (uint16_t) temp_data[0] << std::endl;
+            if (is_vst_write) {
+                temp_data[0] = temp_data[0] | (1 << vst_offset);
+                std::cout << "after vst read temp_data[0]=" << (uint16_t) temp_data[0] << std::endl;
+                is_vst_write = false;
+                vst_tmp_data = temp_data[0];
+                delete respone;
+                vst_tmp_data = vst_tmp_data | (1 << vst_offset);
+                std::vector<uint8_t> vst_tmp_data_write = {vst_tmp_data};
+                phnswDMA::DMAwrite(vst_tmp_addr, 1, &vst_tmp_data_write);
+                return;
+            } else {
+                temp_data[0] = temp_data[0] & (1 << vst_offset);
+            }
+        }
         std::memcpy(res, temp_data, res_size);
     }
-    // std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
 
     delete respone;
-    // std::cout << "spm_size_now=" << spm_size_now << std::endl;
     if (spm_size_now >= spm_size) is_spm = false;
 
     if (is_spm) {

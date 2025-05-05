@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-05-05 15:25:00
+ * @LastEditTime: 2025-05-05 20:12:06
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -799,13 +799,17 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     if (inst_now[inst_count][1] == "R") {
         std::cout << "VST R" << std::endl;
         dma->stopFlag = true;
-        dma->DMAread(spm_addr, 8, (void *) vst_res, res_size);
+        dma->is_vst = true;
+        dma->vst_offset = spm_offset;
+        dma->DMAread(spm_addr, 1, (void *) vst_res, res_size);
     } else if (inst_now[inst_count][1] == "W") {
-        dma->Resset(vst_res, res_size);
+        dma->is_vst = true;
+        dma->is_vst_write = true;
+        dma->vst_offset = spm_offset;
         int wr_size = 1;
         std::vector<uint8_t> data(wr_size, 0x1 << spm_offset);
         std::cout << "VST W data=" << (uint32_t) data[0] << std::endl;
-        dma->DMAwrite(spm_addr, wr_size, &data);
+        dma->DMAvst(spm_addr, 1, vst_res, res_size);
     } else {
         output.fatal(CALL_INFO, -1, "ERROR: vst mode not found");
     }
@@ -865,7 +869,7 @@ int Phnsw::inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now
 void Phnsw::load_inst_creat_img() {
     Phnsw::pc = 0; // reset pc
     std::ifstream img_file;
-    img_file.open("instructions/instructions2.asm");
+    img_file.open("instructions/dummy2.asm");
     assert(img_file);
     std::string inst_line;
     std::vector<std::vector<std::string>> inst_single_cycle;

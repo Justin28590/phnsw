@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-23 22:35:02
+ * @LastEditTime: 2025-05-05 20:04:00
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -55,10 +55,15 @@ public:
     virtual void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) =0;
     virtual void DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) =0;
     virtual void DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) =0;
+    virtual void DMAvst(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) =0;
     virtual void Resset(void *res, size_t res_size) =0;
 
     // Stop Flag
     bool stopFlag;
+
+    bool is_vst;
+    bool is_vst_write;
+    uint32_t vst_offset;
 
     // Serialization
     phnswDMAAPI();
@@ -126,6 +131,7 @@ public:
     void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) override;
     void DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) override;
     void DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) override;
+    void DMAvst(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
     // bool stopFalg;
@@ -165,6 +171,9 @@ private:
     bool is_spm;
     int spm_size, spm_size_now;
     uint64_t spm_addr;
+
+    uint8_t vst_tmp_data;
+    SST::Interfaces::StandardMem::Addr vst_tmp_addr;
 };
 
 } } /* Namspaces */
