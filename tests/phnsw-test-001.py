@@ -27,8 +27,8 @@ dma.addParams({
     "repeats" : "15",
     "scratchSize" : 1024,   # 1K scratch
     "maxAddr" : 4096,       # 4K mem
-    "scratchLineSize" : 64,
-    "memLineSize" : 64,
+    "scratchLineSize" : 512,
+    "memLineSize" : 512,
     "clock" : "1GHz",
     "maxOutstandingRequests" : 16,
     "maxRequestsPerCycle" : 2,
@@ -51,7 +51,7 @@ scratch_conv_dma = comp_scratch_dma.setSubComponent("backendConvertor", "memHier
 scratch_back_dma = scratch_conv_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 scratch_back_dma.addParams({
     "access_time" : "10ps",
-    "mem_size" : "2MiB"
+    "mem_size" : "1KiB"
 })
 scratch_conv_dma.addParams({
     "debug_location" : 0,
@@ -68,7 +68,7 @@ memctrl_dma.addParams({
 })
 memory_dma = memctrl_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 memory_dma.addParams({
-    "access_time" : "1 ns", # TODO
+    "access_time" : "100 ns", # TODO
     "mem_size" : "1024MiB"
 })
 
