@@ -9,8 +9,11 @@
  * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
  */
 
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <ostream>
+#include <math.h>
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
 #include "phnsw.h"
