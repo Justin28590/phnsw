@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-23 20:23:18
+ * @LastEditTime: 2025-04-23 22:35:02
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -20,6 +20,7 @@
  * See 'basicSubComponent_component.h' for more information on how the example simulation works
  */
 
+#include <cstdint>
 #define SPM_NEIGHBOR_ADDR 0x0
 #define SPM_NEIGHBOR_SIZE 0x80 // 0x80(16) = 128(10) in bytes = 32 * 4(bytes)
 #define SPM_RAW_BASE SPM_NEIGHBOR_SIZE
@@ -53,6 +54,7 @@ public:
     virtual void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) =0;
     virtual void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) =0;
     virtual void DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) =0;
+    virtual void DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) =0;
     virtual void Resset(void *res, size_t res_size) =0;
 
     // Stop Flag
@@ -123,6 +125,7 @@ public:
     void DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) override;
     void DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) override;
     void DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) override;
+    void DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, void *res, size_t res_size) override;
     void serialize_order(SST::Core::Serialization::serializer& ser) override;
 
     // bool stopFalg;
@@ -158,6 +161,10 @@ private:
 
     void *res;
     size_t res_size;
+
+    bool is_spm;
+    int spm_size, spm_size_now;
+    uint64_t spm_addr;
 };
 
 } } /* Namspaces */

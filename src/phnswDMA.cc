@@ -2,13 +2,14 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-04-18 15:38:00
+ * @LastEditTime: 2025-05-05 10:46:43
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
  * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
  */
 
+#include <cstdint>
 #include <sst/core/sst_config.h> // This include is REQUIRED for all implementation files
 
 #include "phnswDMA.h"
@@ -82,6 +83,8 @@ phnswDMA::phnswDMA(ComponentId_t id, Params& params, TimeConverter *time) :
     
     // Disable StOP Flag
     phnswDMA::stopFlag = false;
+
+    phnswDMA::is_spm = false;
 }
 
 /**
@@ -128,6 +131,26 @@ void phnswDMA::DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interface
     requests[req->getID()] = timestamp;
     memory->send(req);
     num_events_issued++;
+}
+
+void phnswDMA::DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, void *rd_res, size_t rd_res_size) {
+    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAspmrd()> DMA spmrd called with addr 0x"
+    << std::hex << addr
+    <<std::dec << " and size " << size << std::endl;
+
+    is_spm = true;
+    spm_size = (int) size;
+    spm_size_now = 0;
+    spm_addr = addr;
+
+    SST::Interfaces::StandardMem::Request *req;
+    req = new SST::Interfaces::StandardMem::Read(spm_addr, 8);
+    req->setNoncacheable();
+    output.output("%s\n", req->getString().c_str());
+    memory->send(req);
+    res = rd_res;
+    res_size = 8;
+    spm_size_now += 8;
 }
 
 /**
@@ -178,11 +201,10 @@ void phnswDMA::serialize_order(SST::Core::Serialization::serializer& ser) {
  * @return {*}
  */
 void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
-    phnsw::phnswDMA::stopFlag = false;
     std::vector<uint8_t> data;
     if (typeid(*respone) == typeid(SST::Interfaces::StandardMem::ReadResp))
         data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
-    uint8_t temp_data[8] = {0};
+    uint8_t temp_data[512] = {0};
     std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
     << "; respone: " << respone->getString()
     // << " Data=" << (uint16_t) data.back()
@@ -196,8 +218,23 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
         std::memcpy(res, temp_data, res_size);
     }
     // std::cout << "dma_res=" << (uint64_t) *(uint8_t *)res << std::endl;
-    
+
     delete respone;
+    // std::cout << "spm_size_now=" << spm_size_now << std::endl;
+    if (spm_size_now >= spm_size) is_spm = false;
+
+    if (is_spm) {
+        SST::Interfaces::StandardMem::Request *req;
+        req = new SST::Interfaces::StandardMem::Read(spm_addr + spm_size_now, 8);
+        req->setNoncacheable();
+        output.output("%s\n", req->getString().c_str());
+        memory->send(req);
+        spm_size_now += 8;
+        res = (void *) ((uint64_t) res + 8);
+    } else {
+        // is_spm = false;
+        phnsw::phnswDMA::stopFlag = false;
+    }
 }
 
 /**

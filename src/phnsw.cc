@@ -745,9 +745,18 @@ int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         *dma_addr = *dma_addr;
         std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
         << " size=" << *dma_size << std::endl;
-        dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr,
-                        (size_t) *dma_size,
-                        (void *) rd, rd_size);
+        if (*dma_addr < 1024 /* TODO */ && *dma_size > 2) {
+            std::cout << "long read" << std::endl;
+            dma->DMAspmrd((SST::Interfaces::StandardMem::Addr) *dma_addr,
+                            (size_t) *dma_size,
+                            (void *) rd,
+                            rd_size);
+        } else {
+            std::cout << "normal read" << std::endl;
+            dma->DMAread((SST::Interfaces::StandardMem::Addr) *dma_addr,
+            (size_t) *dma_size,
+            (void *) rd, rd_size);
+        }
         return 0;
     } else {
         output.fatal(CALL_INFO, -1, "ERROR: %s is invalid dma_option", option.c_str());
