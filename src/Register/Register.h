@@ -1,12 +1,15 @@
 #ifndef REGISTER_H
 #define REGISTER_H
 
+#include <cmath>
 #include <iostream>
 #include <unordered_map>
 #include <stdint.h>
+#include <cstdint>
 #include <string>
-#include <vector>
-#include <any>
+#include <array>
+// #include <vector>
+// #include <any>
 
 namespace SST {
 namespace phnsw {
@@ -59,6 +62,10 @@ struct Register {
         reg_map["vst_res"]      = new RegTemp<uint8_t>{"VISIT", 0};
         reg_map["raw_res"]        = new RegTemp<std::array<float, 128>>{"RAW", {0}};
         reg_map["addr"]           = new RegTemp<uint32_t>{"index2addr", 0};
+        reg_map["rmc_dist"]       = new RegTemp<uint32_t>{"RMC", 0};
+        reg_map["rmc_index"]       = new RegTemp<uint32_t>{"RMC", 0};
+        reg_map["rmw_dist"]       = new RegTemp<uint32_t>{"RMW", 0};
+        reg_map["rmw_index"]       = new RegTemp<uint32_t>{"RMW", 0};
         // Vars
         reg_map["C_dist"]            = new RegTemp<std::array<uint32_t, 60>>{"Candidate Dist", {0}};
         reg_map["C_index"]           = new RegTemp<std::array<uint32_t, 60>>{"Candidate Index", {0}};
