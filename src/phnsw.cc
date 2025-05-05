@@ -250,6 +250,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"JMP", "jump to a pc", &Phnsw::inst_jmp, "nord", "nord", 1},
     {"MOV", "move data between regs", &Phnsw::inst_mov, "nord", "nord", 1},
     {"ADD", "add two numbers", &Phnsw::inst_add, "alu_res", "nord", 1},
+    {"SUB", "sub two numbers", &Phnsw::inst_sub, "alu_res", "nord", 1},
     {"CMP", "cmp two numbers", &Phnsw::inst_cmp, "cmp_res", "nord", 1},
     {"DIST", "calc distance", &Phnsw::inst_dist, "dist_res", "nord", 1},
     {"LOOK", "look up", &Phnsw::inst_look, "look_res_index", "nord", 1},
