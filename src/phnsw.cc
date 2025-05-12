@@ -800,6 +800,7 @@ int Phnsw::inst_nei(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     uint32_t *rd = (uint32_t *) Phnsw::Registers.find_match("nei_index", rd_size);
     uint32_t *i = (uint32_t *) Phnsw::Registers.find_match("i", rd_size);
     uint32_t addr_of_nei = SPM_NEIGHBOR_ADDR + (*i * 4);
+    // std::cout << "<NEI> nei_index: " << *rd << std::endl;
 
     dma->DMAread(addr_of_nei, 4, (void *) rd, rd_size);
     return 0;
