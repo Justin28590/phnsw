@@ -78,8 +78,6 @@ struct Register {
         reg_map["W_index"]           = new RegTemp<std::array<uint32_t, 40>>{"Wait Index", {0}};
         reg_map["W_dist"]            = new RegTemp<std::array<uint32_t, 40>>{"Wait Dist", {0}};
         reg_map["W_size"]            = new RegTemp<uint32_t>{"Wait Size", 0};
-        reg_map["lowB_index"]        = new RegTemp<uint32_t>{"lower bound index", 0};
-        reg_map["lowB_dist"]         = new RegTemp<uint32_t>{"lower bound dist", 0};
         reg_map["current_node"]      = new RegTemp<uint32_t>{"current node", 0};
         reg_map["CN_neighbor_index"] = new RegTemp<uint32_t>{"Current Node NeighborList indexs", {0}};
         reg_map["i"]                 = new RegTemp<uint32_t>{"temp var", 0};
