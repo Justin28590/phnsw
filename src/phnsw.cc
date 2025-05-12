@@ -512,18 +512,20 @@ int Phnsw::inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     } catch (char *e) {
         output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd.c_str());
     }
-    int max_len = rd == "C" ? 60 : 40;
-    std::array<uint32_t, 60> *X_dist, *X_index;
+    // std::cout << "X_size = " << *X_size << std::endl;
+    int max_len = rd == "C" ? 360 : 40;
+    if (rd == "C") pushc_times ++; else pushw_times ++;
+    std::array<uint32_t, 360> *X_dist, *X_index;
     uint32_t insert_pos = 0;
-    if (*X_size < max_len) {
+    if (*X_size <= max_len) {
         try {
-            X_dist = (std::array<uint32_t, 60> *) Phnsw::Registers.find_match(rd + "_dist", src_size);
-            X_index = (std::array<uint32_t, 60> *) Phnsw::Registers.find_match(rd + "_index", src_size);
+            X_dist = (std::array<uint32_t, 360> *) Phnsw::Registers.find_match(rd + "_dist", src_size);
+            X_index = (std::array<uint32_t, 360> *) Phnsw::Registers.find_match(rd + "_index", src_size);
         } catch (char *e) {
             output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, rd.c_str());
         }
     } else {
-        output.fatal(CALL_INFO, -1, "ERROR: %s_size too large", rd.c_str());
+        output.fatal(CALL_INFO, -1, "ERROR: %s_size too large = %d\n", rd.c_str(), *X_size);
     }
     uint32_t new_dist = *src_dist_ptr;
     uint32_t new_index = *src_index_ptr;
@@ -532,14 +534,19 @@ int Phnsw::inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     while (insert_pos  < *X_size && (*X_dist)[insert_pos] < new_dist) {
         insert_pos++;
     }
+    if (X_index->at(insert_pos) == new_index) {
+        return 0;
+    }
+    // std::cout << "inseart pos = " << insert_pos << std::endl;
     // Shift elements to make new space for insertion
-    for (uint32_t i = insert_pos; i < *X_size; i++) {
-        (*X_dist)[i + 1] = (*X_dist)[i];
-        (*X_index)[i + 1] = (*X_index)[i];
+    for (size_t i = max_len - 1; i > insert_pos; i--) {
+        // std::cout << "i=" << i << std::endl;
+        X_dist->at(i) = X_dist->at(i - 1);
+        X_index->at(i) = X_index->at(i - 1);
     }
     // insert at right position
-    (*X_dist)[insert_pos] = *((uint32_t *) src_dist_ptr);
-    (*X_index)[insert_pos] = *((uint32_t *) src_index_ptr);
+    X_dist->at(insert_pos) = *((uint32_t *) src_dist_ptr);
+    X_index->at(insert_pos) = *((uint32_t *) src_index_ptr);
 
     std::cout << "push " << src_dist_name << " = " << *src_dist_ptr << " "
     << src_index_name << " = " << *src_index_ptr << " "
