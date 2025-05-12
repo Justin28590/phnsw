@@ -52,6 +52,7 @@ struct Register {
         reg_map["raw_index"]   = new RegTemp<uint8_t>{"fetch RAW from SPM", 0};
         reg_map["wrm_index"]   = new RegTemp<uint32_t>{"WRM", 0};
         reg_map["index2addr"]  = new RegTemp<uint32_t>{"index2addr", 0};
+        reg_map["acw_index"]   = new RegTemp<uint32_t>{"ACW", 0};
           // Destinations
         reg_map["dist_res"]       = new RegTemp<uint32_t>{"DistCalc", 0};
         reg_map["look_res_index"] = new RegTemp<uint32_t>{"LookUp", 0};
@@ -66,6 +67,10 @@ struct Register {
         reg_map["rmc_index"]       = new RegTemp<uint32_t>{"RMC", 0};
         reg_map["rmw_dist"]       = new RegTemp<uint32_t>{"RMW", 0};
         reg_map["rmw_index"]       = new RegTemp<uint32_t>{"RMW", 0};
+        reg_map["acw_dist"]       = new RegTemp<uint32_t>{"RMW", 0};
+        reg_map["acw_index"]       = new RegTemp<uint32_t>{"RMW", 0};
+        reg_map["nei_index"]        = new RegTemp<uint32_t>{"lower bound index", 0};
+        reg_map["nei_dist"]         = new RegTemp<uint32_t>{"lower bound dist", 0};
         // Vars
         reg_map["C_dist"]            = new RegTemp<std::array<uint32_t, 360>>{"Candidate Dist", {0}};
         reg_map["C_index"]           = new RegTemp<std::array<uint32_t, 360>>{"Candidate Index", {0}};
