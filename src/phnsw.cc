@@ -756,14 +756,14 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
     SST::Interfaces::StandardMem::Addr spm_addr = SPM_VISIT_BASE + *vst_index / 8;
     uint32_t  spm_offset = *vst_index % 8;
-    std::cout << "time=" << getCurrentSimTime()
-    << " inst=VST"
-    << " addr=" << spm_addr
-    << " offset=" << spm_offset
-    << std::endl;
+    // std::cout << "time=" << getCurrentSimTime()
+    // << " inst=VST"
+    // << " addr=" << spm_addr
+    // << " offset=" << spm_offset
+    // << std::endl;
 
     if (inst_now[inst_count][1] == "R") {
-        std::cout << "VST R" << std::endl;
+        // std::cout << "VST R index=" << *vst_index << std::endl;
         dma->stopFlag = true;
         dma->is_vst = true;
         dma->vst_offset = spm_offset;
@@ -775,7 +775,7 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         dma->vst_offset = spm_offset;
         int wr_size = 1;
         std::vector<uint8_t> data(wr_size, 0x1 << spm_offset);
-        std::cout << "VST W data=" << (uint32_t) data[0] << std::endl;
+        std::cout << "VST W data=" << (uint32_t) data[0] << " \tindex=" << *vst_index << " \taddr=" << spm_addr << std::endl;
         dma->DMAvst(spm_addr, 1, vst_res, res_size);
     } else {
         output.fatal(CALL_INFO, -1, "ERROR: vst mode not found");
