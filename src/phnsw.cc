@@ -292,11 +292,11 @@ int Phnsw::inst_jmp(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
 
     if (*cmp_res == 1) {
-        std::cout << "jmp to " << imm << std::endl;
+        // std::cout << "jmp from " << pc << " to " << imm << std::endl;
         Phnsw::pc = imm;
         Phnsw::pc --;
     } else {
-        std::cout << "no jmp" << std::endl;
+        // std::cout << "no jmp" << std::endl;
     }
     return 0;
 }
