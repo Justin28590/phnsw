@@ -797,7 +797,7 @@ int Phnsw::inst_raw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 int Phnsw::inst_nei(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
     dma->stopFlag = true;
     size_t rd_size = 0, i_size = 0;
-    uint32_t *rd = (uint32_t *) Phnsw::Registers.find_match("DMAindex", rd_size);
+    uint32_t *rd = (uint32_t *) Phnsw::Registers.find_match("nei_index", rd_size);
     uint32_t *i = (uint32_t *) Phnsw::Registers.find_match("i", rd_size);
     uint32_t addr_of_nei = SPM_NEIGHBOR_ADDR + (*i * 4);
 
