@@ -837,7 +837,7 @@ int Phnsw::inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     } else if (rd_size == sizeof(std::array<uint32_t, 10>)) {
         tmp_value = (uint64_t) (*(std::array<uint32_t, 10> *) rd_ptr)[0];
     }
-    std::cout<< ", Value " << std::hex << tmp_value << std::dec << "(" << std::bitset<sizeof(uint64_t) * 8>(tmp_value) << ")";
+    std::cout<< ", Value " << /* std::hex << */ tmp_value << std::dec << "(" << std::bitset<sizeof(uint64_t) * 8>(tmp_value) << ")";
     std::cout << ", Size " << rd_size
     << std::endl;
     return 0;
