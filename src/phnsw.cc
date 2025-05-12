@@ -360,7 +360,7 @@ int Phnsw::inst_add(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
     if (src2_name.back() == ']' && src2_name[0] == '[') {
         imm2 = std::stoull(src2_name.substr(1, src2_name.size() - 2));
-        src2_ptr = &imm1; src2_size = sizeof(imm2);
+        src2_ptr = &imm2; src2_size = sizeof(imm2);
     } else {
         src2_ptr = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
     }
@@ -385,7 +385,7 @@ int Phnsw::inst_sub(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     }
     if (src2_name.back() == ']' && src2_name[0] == '[') {
         imm2 = std::stoull(src2_name.substr(1, src2_name.size() - 2));
-        src2_ptr = &imm1; src2_size = sizeof(imm2);
+        src2_ptr = &imm2; src2_size = sizeof(imm2);
     } else {
         src2_ptr = (uint8_t *) Phnsw::Registers.find_match(src2_name, src2_size);
     }
