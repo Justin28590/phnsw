@@ -392,6 +392,9 @@ int Phnsw::inst_sub(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 
     rd_ptr = (uint8_t *) rd_temp_ptr;
     *rd_ptr = *src1_ptr - *src2_ptr;
+    // std::cout << "sub  " << src1_name << "=" << (uint32_t) *src1_ptr << " "
+    // << src2_name << "=" << (uint32_t) *src2_ptr << " "
+    // << "res=" << (uint32_t) *rd_ptr << std::endl;
     return 0;
 }
 
