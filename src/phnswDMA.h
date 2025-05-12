@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-05-05 20:04:00
+ * @LastEditTime: 2025-05-12 18:38:59
  * @FilePath: /phnsw/src/phnswDMA.h
  * @Description: phnsw DMA Component header
  * 
@@ -25,7 +25,8 @@
 #define SPM_NEIGHBOR_SIZE 0x80 // 0x80(16) = 128(10) in bytes = 32 * 4(bytes)
 #define SPM_RAW_BASE SPM_NEIGHBOR_SIZE
 #define SPM_RAW_SIZE 128 * 4 // 128(dim) * 4(bytes)(float32)
-#define MEM_ADDR_BASE 0x400 // 0x400(16) = 1024(10)
+#define SPM_VISIT_BASE 720
+#define MEM_ADDR_BASE 0x800 // 0x800(16) = 2048(10)
 #define MEM_NEIGHBOR ADDR 0X0
 #define MEM_NEIGHBOR_SIZE 1280000
 #define MEM_RAW_BASE 0x138800
