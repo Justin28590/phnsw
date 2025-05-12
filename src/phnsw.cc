@@ -769,6 +769,7 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         dma->vst_offset = spm_offset;
         dma->DMAread(spm_addr, 1, (void *) vst_res, res_size);
     } else if (inst_now[inst_count][1] == "W") {
+        dma->stopFlag = true;
         dma->is_vst = true;
         dma->is_vst_write = true;
         dma->vst_offset = spm_offset;
