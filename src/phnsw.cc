@@ -754,7 +754,7 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     catch (char *e) {
         output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, "vst_res");
     }
-    SST::Interfaces::StandardMem::Addr spm_addr = *vst_index / 8;
+    SST::Interfaces::StandardMem::Addr spm_addr = SPM_VISIT_BASE + *vst_index / 8;
     uint32_t  spm_offset = *vst_index % 8;
     std::cout << "time=" << getCurrentSimTime()
     << " inst=VST"
