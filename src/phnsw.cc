@@ -265,6 +265,7 @@ const std::vector<Phnsw::InstStruct> Phnsw::inst_struct = {
     {"VST", "Access write to mem", &Phnsw::inst_vst, "vst_res", "nord", 1},
     {"RAW", "Load RAW From SPM to RAW1", &Phnsw::inst_raw, "nord", "nord", 1},
     {"NEI", "Load N[i] from SPM to DAMindex", &Phnsw::inst_nei, "nord", "nord", 1},
+    {"ACW", "Access to W", &Phnsw::inst_acw, "nord", "nord", 1},
     {"INFO", "print reg info", &Phnsw::inst_info, "nord", "nord", 1},
     {"dummy", "dummy inst", &Phnsw::inst_dummy, "nord", "nord", 1}};
 
@@ -835,6 +836,19 @@ int Phnsw::inst_nei(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     uint32_t addr_of_nei = SPM_NEIGHBOR_ADDR + (*i * 4);
 
     dma->DMAread(addr_of_nei, 4, (void *) rd, rd_size);
+    return 0;
+}
+
+int Phnsw::inst_acw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) {
+    size_t wsize=0;
+    std::array<uint32_t, 40> *windex = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_index", wsize);
+    std::array<uint32_t, 40> *wdist = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", wsize);
+    uint32_t *index = (uint32_t *) Phnsw::Registers.find_match("acw_index", wsize);
+    uint32_t *rd_dist = (uint32_t *) Phnsw::Registers.find_match("acw_dist", wsize);
+    uint32_t *rd_index = (uint32_t *) Phnsw::Registers.find_match("acw_index", wsize);
+
+    *rd_dist = (*wdist)[*index];
+    *rd_index = (*windex)[*index];
     return 0;
 }
 
