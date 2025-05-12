@@ -731,10 +731,10 @@ int Phnsw::inst_dma(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
 
     // Read R: mem -> ?
     // Read N: mem -> spm
-    std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
-    << " dma addr=" << *dma_addr
-    << " size=" << *dma_size
-    << std::endl;
+    // std::cout << "time=" << getCurrentSimTime() << " inst=DMA"
+    // << " dma addr=" << *dma_addr
+    // << " size=" << *dma_size
+    // << std::endl;
     return 0;
 }
 
