@@ -634,11 +634,11 @@ int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     uint32_t index_to_rm;
     try {
         index_to_rm = *(uint32_t *) Phnsw::Registers.find_match(idx, idx_size);
-        if (idx_size != sizeof(uint32_t)) {
-            output.fatal(CALL_INFO, -1, "ERROR: %s size not match!", idx.c_str());
+        if (idx_size != sizeof(uint32_t) && idx_size != sizeof(uint8_t)) {
+            output.fatal(CALL_INFO, -1, "ERROR: %s size not match!\n", idx.c_str());
         }
     } catch (char *e) {
-        output.fatal(CALL_INFO, -1, "ERROR: %s %s", e, idx.c_str());
+        output.fatal(CALL_INFO, -1, "ERROR: %s %s\n", e, idx.c_str());
     }
     try {
         X_dist_ptr = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", X_dist_size);
@@ -658,44 +658,21 @@ int Phnsw::inst_rmw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
     rd2_ptr = (std::array<uint32_t, 40> *) rd2_temp_ptr;
     *rd_ptr = *X_dist_ptr;
     *rd2_ptr = *X_index_ptr;
-    size_t loops = 60, target_addr = 40;
-    std::cout << "rmw index = " << index_to_rm << std::endl;
-    uint32_t index_ref;
-    for (size_t i=0; i<loops; i++) {
-        if (mode == "W") {
-            if (i == index_to_rm) {
-                *rmw_dist = (*X_dist_ptr)[i];
-                *rmw_index = (*X_index_ptr)[i];
-                std::cout  << "rmw index = " << i
-                << " rmw dist = " << (*X_dist_ptr)[i]
-                << " rmw index = " << (*X_index_ptr)[i]
-                << std::endl;
-                (*rd_ptr)[i] = 0;
-                (*rd2_ptr)[i] = 0;
-                target_addr = i;
-                break;
-            }
-        } else if (mode == "R") {
-            if ((*X_index_ptr)[i] == index_to_rm) {
-                *rmw_dist = (*X_dist_ptr)[i];
-                *rmw_index = (*X_index_ptr)[i];
-                std::cout  << "rmw index = " << i
-                << " rmw dist = " << (*X_dist_ptr)[i]
-                << " rmw index = " << (*X_index_ptr)[i]
-                << std::endl;
-                (*rd_ptr)[i] = 0;
-                (*rd2_ptr)[i] = 0;
-                target_addr = i;
-                break;
-            }
+    size_t loops = 40;
+    for (size_t i=0; i<loops-1; i++) {
+        if (index_to_rm == loops) {
+            break;
+        }
+        if (i < index_to_rm) {
+            X_dist_ptr->at(i) = X_dist_ptr->at(i);
+            X_index_ptr->at(i) = X_index_ptr->at(i);
+        } else if (i >= index_to_rm) {
+            X_dist_ptr->at(i) = X_dist_ptr->at(i + 1);
+            X_index_ptr->at(i) = X_index_ptr->at(i + 1);
         }
     }
-    for(size_t i=target_addr; i<loops-1; i++) { // shift left
-        (*rd_ptr)[i] = (*rd_ptr)[i+1];
-        (*rd2_ptr)[i] = (*rd2_ptr)[i+1];
-    }
-    (*rd_ptr)[loops - 1] = 0;
-    (*rd2_ptr)[loops - 1] = 0;
+    X_dist_ptr->at(loops-1) = 0;
+    X_index_ptr->at(loops-1) = 0;
     uint32_t *X_size = (uint32_t *) Phnsw::Registers.find_match("W_size", rd_size);
     *X_size = *X_size - 1;
     return 0;
