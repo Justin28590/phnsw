@@ -6,6 +6,7 @@
 *.dot
 *.txt
 *.json
+*drawio*
 ana
 **.tar.gz
 .vscode
