@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-12-17 16:46:55
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-05-05 20:15:26
+ * @LastEditTime: 2025-05-12 18:30:28
  * @FilePath: /phnsw/src/phnswDMA.cc
  * @Description: phnsw DMA Component header
  * 
@@ -105,16 +105,16 @@ phnswDMA::~phnswDMA() { }
  * @return {*}
  */
 void phnswDMA::DMAread(SST::Interfaces::StandardMem::Addr addr, size_t size, void *rd_res, size_t rd_res_size) {
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
-    << std::hex << addr
-    << std::dec << " and size " << size
-    << " at cycle " << std::dec << getCurrentSimTime()
-    << std::endl;
+    // std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAread()> DMA read called with addr 0x"
+    // << std::hex << addr
+    // << std::dec << " and size " << size
+    // << " at cycle " << std::dec << getCurrentSimTime()
+    // << std::endl;
 
     SST::Interfaces::StandardMem::Request *req;
     req = new SST::Interfaces::StandardMem::Read(addr, size);
     req->setNoncacheable();
-    output.output("%s\n", req->getString().c_str());
+    // output.output("%s\n", req->getString().c_str());
     requests[req->getID()] = timestamp;
     memory->send(req);
     num_events_issued++;
@@ -129,12 +129,12 @@ void phnswDMA::DMAvst(SST::Interfaces::StandardMem::Addr addr, size_t size, void
 }
 
 void phnswDMA::DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interfaces::StandardMem::Addr dstAddr, uint32_t data_size) {
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAget()> DMA get called with srcAddr 0x"
-    << std::hex << srcAddr
-    << std::dec << " and dstAddr 0x"<< std::hex << dstAddr
-    << " at cycle " << std::dec << getCurrentSimTime()
-    << std::dec << " and data_size " << data_size
-    << std::endl;
+    // std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAget()> DMA get called with srcAddr 0x"
+    // << std::hex << srcAddr
+    // << std::dec << " and dstAddr 0x"<< std::hex << dstAddr
+    // << " at cycle " << std::dec << getCurrentSimTime()
+    // << std::dec << " and data_size " << data_size
+    // << std::endl;
 
     SST::Interfaces::StandardMem::Request *req;
     req = new Interfaces::StandardMem::MoveData(srcAddr, dstAddr, data_size);
@@ -144,9 +144,9 @@ void phnswDMA::DMAget(SST::Interfaces::StandardMem::Addr srcAddr, SST::Interface
 }
 
 void phnswDMA::DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, void *rd_res, size_t rd_res_size) {
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAspmrd()> DMA spmrd called with addr 0x"
-    << std::hex << addr
-    <<std::dec << " and size " << size << std::endl;
+    // std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAspmrd()> DMA spmrd called with addr 0x"
+    // << std::hex << addr
+    // <<std::dec << " and size " << size << std::endl;
 
     is_spm = true;
     spm_size = (int) size;
@@ -156,7 +156,7 @@ void phnswDMA::DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, vo
     SST::Interfaces::StandardMem::Request *req;
     req = new SST::Interfaces::StandardMem::Read(spm_addr, 8);
     req->setNoncacheable();
-    output.output("%s\n", req->getString().c_str());
+    // output.output("%s\n", req->getString().c_str());
     memory->send(req);
     res = rd_res;
     res_size = 8;
@@ -171,21 +171,21 @@ void phnswDMA::DMAspmrd(SST::Interfaces::StandardMem::Addr addr, size_t size, vo
  * @return {*}
  */
 void phnswDMA::DMAwrite(SST::Interfaces::StandardMem::Addr addr, size_t size, std::vector<uint8_t>* data) {
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAwrite()> DMA write called with addr 0x"
-    << std::hex << addr
-    << std::dec << " and size " << size
-    << " at cycle " << std::dec << getCurrentSimTime()
-    << " write " << std::hex;
-    for (auto element: *data) {
-        std::cout << static_cast<int>(element);
-    }
-    std::cout << std::dec << std::endl;
+    // std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::DMAwrite()> DMA write called with addr 0x"
+    // << std::hex << addr
+    // << std::dec << " and size " << size
+    // << " at cycle " << std::dec << getCurrentSimTime()
+    // << " write " << std::hex;
+    // for (auto element: *data) {
+    //     std::cout << static_cast<int>(element);
+    // }
+    // std::cout << std::dec << std::endl;
 
     SST::Interfaces::StandardMem::Request *req;
     req = new SST::Interfaces::StandardMem::Write(addr, size, *data);
     req->setNoncacheable(); // Key point! if non-cacheable not set, nothing will be written
-    output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %lu, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
-    output.output("%s\n", req->getString().c_str());
+    // output.output("ScratchCPU (%s) sending Write. Addr: %" PRIu64 ", Size: %lu, simtime: %" PRIu64 "ns\n", getName().c_str(), addr, size, getCurrentSimCycle()/1000);
+    // output.output("%s\n", req->getString().c_str());
     // requests[req->getID()] = timestamp;
     memory->send(req);
     num_events_issued++;
@@ -215,10 +215,10 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
     if (typeid(*respone) == typeid(SST::Interfaces::StandardMem::ReadResp))
         data = ((SST::Interfaces::StandardMem::ReadResp*) respone)->data;
     uint8_t temp_data[512] = {0};
-    std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
-    << "; respone: " << respone->getString()
-    // << " Data=" << (uint16_t) data.back()
-    << std::endl;
+    // std::cout << "<File: phnswDMA.cc> <Function: phnswDMA::handleEvent()> time=" << getCurrentSimTime()
+    // << "; respone: " << respone->getString()
+    // // << " Data=" << (uint16_t) data.back()
+    // << std::endl;
 
     if (typeid(*respone) == typeid(SST::Interfaces::StandardMem::ReadResp)) {
         for (size_t i = 0; i < data.size(); i++) {
@@ -227,10 +227,10 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
         }
         if (is_vst) {
             is_vst = false;
-            std::cout << "vst read temp_data[0]=" << (uint16_t) temp_data[0] << std::endl;
+            // std::cout << "vst read temp_data[0]=" << (uint16_t) temp_data[0] << std::endl;
             if (is_vst_write) {
                 temp_data[0] = temp_data[0] | (1 << vst_offset);
-                std::cout << "after vst read temp_data[0]=" << (uint16_t) temp_data[0] << std::endl;
+                // std::cout << "after vst read temp_data[0]=" << (uint16_t) temp_data[0] << std::endl;
                 is_vst_write = false;
                 vst_tmp_data = temp_data[0];
                 delete respone;
@@ -252,7 +252,7 @@ void phnswDMA::handleEvent( SST::Interfaces::StandardMem::Request *respone ) {
         SST::Interfaces::StandardMem::Request *req;
         req = new SST::Interfaces::StandardMem::Read(spm_addr + spm_size_now, 8);
         req->setNoncacheable();
-        output.output("%s\n", req->getString().c_str());
+        // output.output("%s\n", req->getString().c_str());
         memory->send(req);
         spm_size_now += 8;
         res = (void *) ((uint64_t) res + 8);
