@@ -10,7 +10,7 @@ comp_cpu = sst.Component("phnsw", "phnsw.phnsw")
 comp_cpu.addParams({
     "printFrequency" : "5",
     "repeats" : "15",
-    "scratchSize" : 1024,   # 1K scratch
+    "scratchSize" : 2048,   # 2K scratch
     "maxAddr" : 4096,       # 4K mem
     "scratchLineSize" : 64,
     "memLineSize" : 64,
@@ -25,7 +25,7 @@ dma = comp_cpu.setSubComponent("dma", "phnsw.phnswDMA")
 dma.addParams({
     "printFrequency" : "5",
     "repeats" : "15",
-    "scratchSize" : 1024,   # 1K scratch
+    "scratchSize" : 2048,   # 2K scratch
     "maxAddr" : 4096,       # 4K mem
     "scratchLineSize" : 512,
     "memLineSize" : 512,
@@ -41,7 +41,7 @@ comp_scratch_dma.addParams({
     "debug" : DEBUG_SCRATCH,
     "debug_level" : 10,
     "clock" : "2GHz",
-    "size" : "1KiB",
+    "size" : "2KiB",
     "scratch_line_size" : 64,
     "memory_line_size" : 64,
     "backing" : "mmap",
@@ -51,7 +51,7 @@ scratch_conv_dma = comp_scratch_dma.setSubComponent("backendConvertor", "memHier
 scratch_back_dma = scratch_conv_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 scratch_back_dma.addParams({
     "access_time" : "10ps",
-    "mem_size" : "1KiB"
+    "mem_size" : "2KiB"
 })
 scratch_conv_dma.addParams({
     "debug_location" : 0,
