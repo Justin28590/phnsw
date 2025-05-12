@@ -231,6 +231,9 @@ public:
     int inst_acw(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_info(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
     int inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now);
+    // function statistics
+    int pushc_times;
+    int pushw_times;
 };
 
 } } // namespace phnsw
