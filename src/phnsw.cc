@@ -457,12 +457,12 @@ int Phnsw::inst_dist(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
         dist_tmp += pow(t, 2);
     }
     *rd_ptr = (uint32_t) dist_tmp;
-    std::cout << std::endl;
-    std::cout << "pc=" << Phnsw::pc << " ";
-    std::cout << "inst: " << "DIST" << "; ";
-    std::cout << "raw1[0] " << (float) (*src1_ptr)[0] << "; ";
-    std::cout << "raw2[0] " << (float) (*src2_ptr)[0] << "; ";
-    std::cout << "Value " << *rd_ptr << std::endl;
+    // std::cout << std::endl;
+    // std::cout << "pc=" << Phnsw::pc << " ";
+    // std::cout << "inst: " << "DIST" << "; ";
+    // std::cout << "raw1[0] " << (float) (*src1_ptr)[0] << "; ";
+    // std::cout << "raw2[0] " << (float) (*src2_ptr)[0] << "; ";
+    // std::cout << "Value " << *rd_ptr << std::endl;
     return 0;
 }
 
