@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-05-13 20:15:10
+ * @LastEditTime: 2025-05-13 20:19:28
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -166,10 +166,13 @@ void Phnsw::complete(unsigned int phase) {
     size_t w_size;
     std::array<uint32_t, 40> *W_index = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_index", w_size);
     std::cout << "W_index: " << std::endl;
+    int W_not_0_counts=0;
     for (int i=0; i<40; i++) {
         std::cout << W_index->at(i) << " ";
+        W_not_0_counts = W_index->at(i) ? W_not_0_counts+1 : W_not_0_counts;
     }
     std::cout << std::endl;
+    std::cout << "W_not_0_counts = " << W_not_0_counts << std::endl;
     std::array<uint32_t, 40> *W_dist = (std::array<uint32_t, 40> *) Phnsw::Registers.find_match("W_dist", w_size);
     std::cout << "W_dist: " << std::endl;
     for (int i=0; i<40; i++) {
@@ -552,13 +555,13 @@ int Phnsw::inst_push(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now)
     X_dist->at(insert_pos) = *((uint32_t *) src_dist_ptr);
     X_index->at(insert_pos) = *((uint32_t *) src_index_ptr);
 
-    std::cout << "push " << src_dist_name << " = " << *src_dist_ptr << " "
-    << src_index_name << " = " << *src_index_ptr << " "
-    << rd << " "
-    << "insert_pos = " << insert_pos << " "
-    << "after insertion dist = " << (*X_dist)[insert_pos] << " "
-    << "after insertion index = " << (*X_index)[insert_pos] << " "
-    << std::endl;
+    // std::cout << "push " << src_dist_name << " = " << *src_dist_ptr << " "
+    // << src_index_name << " = " << *src_index_ptr << " "
+    // << rd << " "
+    // << "insert_pos = " << insert_pos << " "
+    // << "after insertion dist = " << (*X_dist)[insert_pos] << " "
+    // << "after insertion index = " << (*X_index)[insert_pos] << " "
+    // << std::endl;
     *X_size = *X_size + 1;
     return 0;
 }
@@ -779,7 +782,7 @@ int Phnsw::inst_vst(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now) 
         dma->vst_offset = spm_offset;
         int wr_size = 1;
         std::vector<uint8_t> data(wr_size, 0x1 << spm_offset);
-        std::cout << "VST W data=" << (uint32_t) data[0] << " \tindex=" << *vst_index << " \taddr=" << spm_addr << std::endl;
+        // std::cout << "VST W data=" << (uint32_t) data[0] << " \tindex=" << *vst_index << " \taddr=" << spm_addr << std::endl;
         dma->DMAvst(spm_addr, 1, vst_res, res_size);
     } else {
         output.fatal(CALL_INFO, -1, "ERROR: vst mode not found");
