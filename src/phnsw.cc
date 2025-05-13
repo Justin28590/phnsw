@@ -2,7 +2,7 @@
  * @Author: Zeng GuangYi tgy_scut2021@outlook.com
  * @Date: 2024-11-10 00:22:53
  * @LastEditors: Zeng GuangYi tgy_scut2021@outlook.com
- * @LastEditTime: 2025-05-12 19:15:30
+ * @LastEditTime: 2025-05-13 20:15:10
  * @FilePath: /phnsw/src/phnsw.cc
  * @Description: phnsw Core Component
  * 
@@ -854,7 +854,7 @@ int Phnsw::inst_dummy(void *rd_temp_ptr, void *rd2_temp_ptr, uint32_t *stage_now
 void Phnsw::load_inst_creat_img() {
     Phnsw::pc = 0; // reset pc
     std::ifstream img_file;
-    img_file.open("instructions/instructions2.asm");
+    img_file.open("instructions/instructions.asm");
     assert(img_file);
     std::string inst_line;
     std::vector<std::vector<std::string>> inst_single_cycle;
