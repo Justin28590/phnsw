@@ -6,7 +6,7 @@ RAW
 
 MOV raw1 raw2 ; raw2 里就一直是query的raw data了。
 
-MOV [2] DMAindex ; ep is index 5373
+MOV [200] DMAindex ; ep is index 5373
 
 DMA R
 
