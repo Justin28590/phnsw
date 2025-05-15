@@ -50,7 +50,7 @@ comp_scratch_dma.addParams({
 scratch_conv_dma = comp_scratch_dma.setSubComponent("backendConvertor", "memHierarchy.simpleMemScratchBackendConvertor")
 scratch_back_dma = scratch_conv_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 scratch_back_dma.addParams({
-    "access_time" : "10ps",
+    "access_time" : "900ps",
     "mem_size" : "2KiB"
 })
 scratch_conv_dma.addParams({
@@ -68,7 +68,7 @@ memctrl_dma.addParams({
 })
 memory_dma = memctrl_dma.setSubComponent("backend", "memHierarchy.simpleMem")
 memory_dma.addParams({
-    "access_time" : "100 ns", # TODO
+    "access_time" : "85 ns", # TODO
     "mem_size" : "1024MiB"
 })
 
